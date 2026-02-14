@@ -26,10 +26,12 @@ export interface HyperJumpViewerProps {
 	url: string;
 	/** Page number to jump to (0-indexed) */
 	page?: number;
+	/** Called when the visible page changes (0-indexed) */
+	onPageChange?: (page: number) => void;
 }
 
 export function HyperJumpViewer(props: HyperJumpViewerProps) {
-	const { url, page } = props;
+	const { url, page, onPageChange } = props;
 	const [document, setDocument] = useState<PDFDocumentProxy>();
 	const [pageIndex, setPageIndex] = useState(0);
 	const [pageDimensions, setPageDimensions] = useState<
@@ -60,30 +62,24 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 		}
 	}, [document, zoomConfig]);
 
-
 	const scrollToPage = useCallback((index: number) => {
 		listRef.current?.scrollToRow({ index, align: "start" });
 		setPageIndex(index);
 	}, []);
 
-	const onLoadSuccess: OnDocumentLoadSuccess = useCallback(
-		(response) => {
-			setDocument(response);
-			if (page !== undefined) {
-				setTimeout(() => {
-					scrollToPage(page);
-				}, 250);
-			}
-		},
-		[scrollToPage, page],
-	);
+	const onLoadSuccess: OnDocumentLoadSuccess = useCallback((response) => {
+		setDocument(response);
+	}, []);
 
 	useEffect(() => {
-		if (page !== undefined) {
-			listRef.current?.scrollToRow({ index: page, align: "start" });
-			setPageIndex(page);
+		if (
+			page !== undefined &&
+			pageDimensions.length === numPages &&
+			numPages > 0
+		) {
+			scrollToPage(page);
 		}
-	}, [page]);
+	}, [page, pageDimensions, numPages, scrollToPage]);
 
 	const file = useMemo(() => {
 		return { url };
@@ -125,9 +121,14 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 
 	const onRowsRendered = useCallback(
 		(visibleRows: { startIndex: number; stopIndex: number }) => {
+			const prev = scrollPageRef.current;
 			scrollPageRef.current = visibleRows.startIndex;
+			if (visibleRows.startIndex !== prev) {
+				setPageIndex(visibleRows.startIndex);
+				onPageChange?.(visibleRows.startIndex);
+			}
 		},
-		[],
+		[onPageChange],
 	);
 
 	return (

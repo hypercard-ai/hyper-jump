@@ -1,14 +1,12 @@
-import type { RowComponentProps } from "react-window";
 import { Page } from "react-pdf";
+import type { RowComponentProps } from "react-window";
 import PDFLoadingPage from "./loading-page";
 
 interface RowProps {
 	scale: number;
 }
 
-export default function PDFPageRenderer(
-	props: RowComponentProps<RowProps>,
-) {
+export default function PDFPageRenderer(props: RowComponentProps<RowProps>) {
 	const { index, style, scale } = props;
 	return (
 		<div className="hj-page" style={style}>
