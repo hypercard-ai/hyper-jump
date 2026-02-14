@@ -1,5 +1,3 @@
-import { Flex } from "@mantine/core";
-import { useElementSize } from "@mantine/hooks";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Document, pdfjs } from "react-pdf";
@@ -11,7 +9,9 @@ import PDFViewerControls from "./controls";
 import PDFErrorPage from "./error-page";
 import PDFLoadingPage from "./loading-page";
 import PDFPageRenderer from "./renderer";
+import "./styles.css";
 import type { ZoomConfig } from "./types";
+import { useElementSize } from "./use-element-size";
 import { getPageDimensions } from "./utils";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -21,16 +21,17 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 const PAGE_MARGIN = 12;
 
-export interface PDFViewerProps {
-	selectedFile: {url: string},
-	pendingPageJump: {page: number}
+export interface HyperJumpViewerProps {
+	/** URL of the PDF file to display */
+	url: string;
+	/** Page number to jump to (0-indexed) */
+	page?: number;
 }
 
-export function PDFViewer(props: PDFViewerProps) {
-	const { selectedFile, pendingPageJump } = props;
+export function HyperJumpViewer(props: HyperJumpViewerProps) {
+	const { url, page } = props;
 	const [document, setDocument] = useState<PDFDocumentProxy>();
 	const [pageIndex, setPageIndex] = useState(0);
-	const [showSidebar, setShowSidebar] = useState(false);
 	const [pageDimensions, setPageDimensions] = useState<
 		{ width: number; height: number }[]
 	>([]);
@@ -53,7 +54,6 @@ export function PDFViewer(props: PDFViewerProps) {
 
 	useEffect(() => {
 		if (document) {
-			console.log("Calc dimensions");
 			getPageDimensions(document, zoomConfig.value).then((value) => {
 				setPageDimensions(value);
 			});
@@ -74,25 +74,25 @@ export function PDFViewer(props: PDFViewerProps) {
 	const onLoadSuccess: OnDocumentLoadSuccess = useCallback(
 		(response) => {
 			setDocument(response);
-			if (pendingPageJump) {
+			if (page !== undefined) {
 				setTimeout(() => {
-					scrollToPage(pendingPageJump.page);
+					scrollToPage(page);
 				}, 250);
 			}
 		},
-		[scrollToPage, pendingPageJump],
+		[scrollToPage, page],
 	);
 
 	useEffect(() => {
-		if (pendingPageJump !== undefined) {
-			listRef.current?.scrollToItem(pendingPageJump.page, "start");
-			setPageIndex(pendingPageJump.page);
+		if (page !== undefined) {
+			listRef.current?.scrollToItem(page, "start");
+			setPageIndex(page);
 		}
-	}, [pendingPageJump]);
+	}, [page]);
 
 	const file = useMemo(() => {
-		return { url: selectedFile.url };
-	}, [selectedFile]);
+		return { url };
+	}, [url]);
 
 	const onPrevPage = useCallback(() => {
 		if (pageIndex > 0) {
@@ -110,27 +110,20 @@ export function PDFViewer(props: PDFViewerProps) {
 		}
 	}, [pageIndex, numPages]);
 
-	const onToggleSidebar = useCallback(() => {
-		setShowSidebar((prev) => !prev);
-	}, []);
-
-	const onChangeZoom = useCallback((value: string | null) => {
-		if (value) {
-			if (value === "automatic") {
-				setZoomConfig({ mode: "automatic", value: 1 });
-			} else {
-				setZoomConfig({ mode: "manual", value: Number.parseFloat(value) });
-			}
+	const onChangeZoom = useCallback((value: string) => {
+		if (value === "automatic") {
+			setZoomConfig({ mode: "automatic", value: 1 });
+		} else {
+			setZoomConfig({ mode: "manual", value: Number.parseFloat(value) });
 		}
 	}, []);
 
 	const getItemSize = useCallback(
 		(index: number) => {
-			// Ensure the dimension for the index exists before accessing it
 			if (pageDimensions[index]) {
 				return pageDimensions[index].height + PAGE_MARGIN;
 			}
-			return 0; // Default size if dimensions aren't calculated yet
+			return 0;
 		},
 		[pageDimensions],
 	);
@@ -143,14 +136,7 @@ export function PDFViewer(props: PDFViewerProps) {
 	);
 
 	return (
-		<Flex
-			pos={"relative"}
-			align={"center"}
-			justify={"center"}
-			h={"100%"}
-			w={"100%"}
-			ref={containerRef}
-		>
+		<div className="hj-viewer" ref={containerRef}>
 			{file ? (
 				<Document
 					file={file}
@@ -158,19 +144,20 @@ export function PDFViewer(props: PDFViewerProps) {
 					error={PDFErrorPage}
 					loading={PDFLoadingPage}
 				>
-					{pageDimensions.length && pageDimensions.length === numPages && (
-						<VariableSizeList
-							ref={listRef}
-							height={containerHeight}
-							width={containerWidth}
-							itemCount={numPages}
-							itemSize={getItemSize}
-							onItemsRendered={onItemsRendered}
-							itemData={{ scale: zoomConfig.value }}
-						>
-							{PDFPageRenderer}
-						</VariableSizeList>
-					)}
+					{pageDimensions.length > 0 &&
+						pageDimensions.length === numPages && (
+							<VariableSizeList
+								ref={listRef}
+								height={containerHeight}
+								width={containerWidth}
+								itemCount={numPages}
+								itemSize={getItemSize}
+								onItemsRendered={onItemsRendered}
+								itemData={{ scale: zoomConfig.value }}
+							>
+								{PDFPageRenderer}
+							</VariableSizeList>
+						)}
 				</Document>
 			) : (
 				<PDFLoadingPage />
@@ -182,9 +169,7 @@ export function PDFViewer(props: PDFViewerProps) {
 				onNextPage={onNextPage}
 				zoomConfig={zoomConfig}
 				onChangeZoom={onChangeZoom}
-				onToggleSidebar={onToggleSidebar}
-				showSidebar={showSidebar}
 			/>
-		</Flex>
+		</div>
 	);
 }

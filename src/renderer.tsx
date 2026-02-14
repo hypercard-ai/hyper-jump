@@ -1,4 +1,3 @@
-import { Flex } from "@mantine/core";
 import { Page } from "react-pdf";
 import PDFLoadingPage from "./loading-page";
 
@@ -12,8 +11,8 @@ export default function PDFPageRenderer(props: IProps) {
 	const { index, style, data } = props;
 	const { scale } = data;
 	return (
-		<Flex style={style} align={"center"} justify={"center"}>
+		<div className="hj-page" style={style}>
 			<Page pageIndex={index} scale={scale} loading={PDFLoadingPage} />
-		</Flex>
+		</div>
 	);
 }
