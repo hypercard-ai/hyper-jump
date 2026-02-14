@@ -11,13 +11,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
-		url: "https://pdfobject.com/pdf/sample.pdf",
+		url: "/hypercard_ai_overview.pdf",
 	},
 };
 
 export const WithPage: Story = {
 	args: {
-		url: "https://pdfobject.com/pdf/sample.pdf",
+		url: "/hypercard_ai_overview.pdf",
 		page: 3,
 	},
 };

@@ -4,7 +4,7 @@ import { Document, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
-import { type ListOnItemsRenderedProps, VariableSizeList } from "react-window";
+import { List, type ListImperativeAPI } from "react-window";
 import PDFViewerControls from "./controls";
 import PDFErrorPage from "./error-page";
 import PDFLoadingPage from "./loading-page";
@@ -46,7 +46,7 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 		width: containerWidth,
 		height: containerHeight,
 	} = useElementSize();
-	const listRef = useRef<VariableSizeList>(null);
+	const listRef = useRef<ListImperativeAPI>(null);
 
 	const numPages = useMemo(() => {
 		return document?.numPages || 0;
@@ -60,14 +60,9 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 		}
 	}, [document, zoomConfig]);
 
-	useEffect(() => {
-		if (listRef.current && pageDimensions.length > 0) {
-			listRef.current.resetAfterIndex(0);
-		}
-	}, [pageDimensions]);
 
 	const scrollToPage = useCallback((index: number) => {
-		listRef.current?.scrollToItem(index, "start");
+		listRef.current?.scrollToRow({ index, align: "start" });
 		setPageIndex(index);
 	}, []);
 
@@ -85,7 +80,7 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 
 	useEffect(() => {
 		if (page !== undefined) {
-			listRef.current?.scrollToItem(page, "start");
+			listRef.current?.scrollToRow({ index: page, align: "start" });
 			setPageIndex(page);
 		}
 	}, [page]);
@@ -97,7 +92,7 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 	const onPrevPage = useCallback(() => {
 		if (pageIndex > 0) {
 			const newPageIndex = pageIndex - 1;
-			listRef.current?.scrollToItem(newPageIndex, "start");
+			listRef.current?.scrollToRow({ index: newPageIndex, align: "start" });
 			setPageIndex(newPageIndex);
 		}
 	}, [pageIndex]);
@@ -105,7 +100,7 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 	const onNextPage = useCallback(() => {
 		if (pageIndex < numPages - 1) {
 			const newPageIndex = pageIndex + 1;
-			listRef.current?.scrollToItem(newPageIndex, "start");
+			listRef.current?.scrollToRow({ index: newPageIndex, align: "start" });
 			setPageIndex(newPageIndex);
 		}
 	}, [pageIndex, numPages]);
@@ -128,9 +123,9 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 		[pageDimensions],
 	);
 
-	const onItemsRendered = useCallback(
-		({ visibleStartIndex }: ListOnItemsRenderedProps) => {
-			scrollPageRef.current = visibleStartIndex;
+	const onRowsRendered = useCallback(
+		(visibleRows: { startIndex: number; stopIndex: number }) => {
+			scrollPageRef.current = visibleRows.startIndex;
 		},
 		[],
 	);
@@ -145,17 +140,15 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 					loading={PDFLoadingPage}
 				>
 					{pageDimensions.length > 0 && pageDimensions.length === numPages && (
-						<VariableSizeList
-							ref={listRef}
-							height={containerHeight}
-							width={containerWidth}
-							itemCount={numPages}
-							itemSize={getItemSize}
-							onItemsRendered={onItemsRendered}
-							itemData={{ scale: zoomConfig.value }}
-						>
-							{PDFPageRenderer}
-						</VariableSizeList>
+						<List
+							listRef={listRef}
+							style={{ height: containerHeight, width: containerWidth }}
+							rowCount={numPages}
+							rowHeight={getItemSize}
+							onRowsRendered={onRowsRendered}
+							rowProps={{ scale: zoomConfig.value }}
+							rowComponent={PDFPageRenderer}
+						/>
 					)}
 				</Document>
 			) : (
