@@ -17,7 +17,7 @@ A React PDF viewer built for RAG (Retrieval-Augmented Generation). Originally de
 ## Installation
 
 ```bash
-npm install @hypercard-ai/hyper-jump
+npm install @hypercard-ai/hyper-jump react-pdf
 ```
 
 ## Usage
@@ -59,6 +59,7 @@ Pass a zero-indexed `page` prop to scroll directly to a page:
 ## Requirements
 
 - React 19+
+- react-pdf 10+
 
 ## Development
 
