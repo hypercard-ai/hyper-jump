@@ -7,6 +7,12 @@
 	justify-content: center;
 	height: 100%;
 	width: 100%;
+	overflow: hidden;
+}
+
+.hj-viewer .react-pdf__Document {
+	height: 100%;
+	width: 100%;
 }
 
 /* Page renderer */

@@ -43,11 +43,7 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 	});
 	const scrollPageRef = useRef(0);
 
-	const {
-		ref: containerRef,
-		width: containerWidth,
-		height: containerHeight,
-	} = useElementSize();
+	const { ref: containerRef } = useElementSize();
 	const listRef = useRef<ListImperativeAPI>(null);
 
 	const numPages = useMemo(() => {
@@ -143,7 +139,6 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 					{pageDimensions.length > 0 && pageDimensions.length === numPages && (
 						<List
 							listRef={listRef}
-							style={{ height: containerHeight, width: containerWidth }}
 							rowCount={numPages}
 							rowHeight={getItemSize}
 							onRowsRendered={onRowsRendered}
