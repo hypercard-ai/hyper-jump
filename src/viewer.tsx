@@ -144,20 +144,19 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 					error={PDFErrorPage}
 					loading={PDFLoadingPage}
 				>
-					{pageDimensions.length > 0 &&
-						pageDimensions.length === numPages && (
-							<VariableSizeList
-								ref={listRef}
-								height={containerHeight}
-								width={containerWidth}
-								itemCount={numPages}
-								itemSize={getItemSize}
-								onItemsRendered={onItemsRendered}
-								itemData={{ scale: zoomConfig.value }}
-							>
-								{PDFPageRenderer}
-							</VariableSizeList>
-						)}
+					{pageDimensions.length > 0 && pageDimensions.length === numPages && (
+						<VariableSizeList
+							ref={listRef}
+							height={containerHeight}
+							width={containerWidth}
+							itemCount={numPages}
+							itemSize={getItemSize}
+							onItemsRendered={onItemsRendered}
+							itemData={{ scale: zoomConfig.value }}
+						>
+							{PDFPageRenderer}
+						</VariableSizeList>
+					)}
 				</Document>
 			) : (
 				<PDFLoadingPage />
