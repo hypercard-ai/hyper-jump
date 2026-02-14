@@ -1,7 +1,7 @@
 {
 	"name": "@hypercard-ai/hyper-jump",
 	"version": "0.1.0",
-	"description": "PDF viewer built for RAG",
+	"description": "Document viewer built for RAG",
 	"license": "MIT",
 	"type": "module",
 	"main": "./dist/index.cjs",

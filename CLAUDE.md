@@ -1,0 +1,31 @@
+# CLAUDE.md
+
+## Project Overview
+
+hyper-jump (`@hypercard-ai/hyper-jump`) is a React PDF viewer component built for RAG applications. It uses react-pdf for rendering and react-window for virtualized scrolling.
+
+## Commands
+
+- `npm run build` - Build with tsup (CJS + ESM + declarations)
+- `npm run test` - Run tests with Vitest
+- `npm run check` - Format and lint with Biome (always run after making changes)
+- `npm run storybook` - Start Storybook dev server on port 6006
+
+## Architecture
+
+- `src/viewer.tsx` - Main `HyperJumpViewer` component (orchestrates document loading, zoom, navigation)
+- `src/controls.tsx` - Navigation and zoom controls UI
+- `src/renderer.tsx` - Individual page renderer (row component for react-window)
+- `src/use-element-size.ts` - ResizeObserver hook for responsive sizing
+- `src/utils.ts` - Page dimension calculations
+- `src/types.ts` - Shared types (`ZoomConfig`)
+- `src/constants.ts` - PDF dimension constants
+- `src/styles.css` - All component styles (BEM convention with `hj-` prefix)
+
+## Conventions
+
+- **Formatting/Linting**: Biome with tabs, double quotes. Run `npm run check` after changes.
+- **Testing**: Vitest with jsdom. Tests live in `tests/`. Run `npm run test` after changes.
+- **CSS**: BEM-style classes prefixed with `hj-` (e.g., `.hj-viewer`, `.hj-controls`)
+- **Exports**: Only `HyperJumpViewer`, `HyperJumpViewerProps`, and `ZoomConfig` are public API
+- **React**: Requires React 19+. Uses automatic JSX runtime.
