@@ -9,4 +9,7 @@ export default defineConfig({
 	external: ["react", "react-dom"],
 	splitting: false,
 	minify: false,
+	banner: {
+		js: 'import "./index.css";',
+	},
 });
