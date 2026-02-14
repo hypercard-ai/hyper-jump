@@ -3,20 +3,30 @@
 	"version": "0.1.0",
 	"description": "Document viewer built for RAG",
 	"license": "MIT",
+	"author": "HyperCard AI",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hypercard-ai/hyper-jump.git"
+	},
+	"homepage": "https://github.com/hypercard-ai/hyper-jump",
+	"bugs": {
+		"url": "https://github.com/hypercard-ai/hyper-jump/issues"
+	},
+	"keywords": [
+		"pdf",
+		"viewer",
+		"react",
+		"rag",
+		"virtualized",
+		"react-pdf"
+	],
 	"type": "module",
-	"main": "./dist/index.cjs",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
-			"import": {
-				"types": "./dist/index.d.ts",
-				"default": "./dist/index.js"
-			},
-			"require": {
-				"types": "./dist/index.d.cts",
-				"default": "./dist/index.cjs"
-			}
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
 		},
 		"./styles.css": "./dist/index.css"
 	},
@@ -26,6 +36,9 @@
 		"LICENSE"
 	],
 	"sideEffects": false,
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"build": "tsup",
 		"dev": "tsup --watch",

@@ -1,5 +1,9 @@
 # hyper-jump
 
+[![npm version](https://img.shields.io/npm/v/@hypercard-ai/hyper-jump)](https://www.npmjs.com/package/@hypercard-ai/hyper-jump)
+[![CI](https://github.com/hypercard-ai/hyper-jump/actions/workflows/ci.yml/badge.svg)](https://github.com/hypercard-ai/hyper-jump/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/@hypercard-ai/hyper-jump)](./LICENSE)
+
 A React PDF viewer built for RAG (Retrieval-Augmented Generation). Originally developed as part of [HyperCard.AI](https://hypercard.ai)'s chatbot platform, hyper-jump provides fast page navigation that pairs with RAG citations to deliver an excellent document viewing experience.
 
 ## Features
