@@ -1,5 +1,12 @@
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { Document, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -21,17 +28,24 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 const PAGE_MARGIN = 12;
 
+export interface HyperJumpViewerAPI {
+	/** Imperatively scroll to a page (0-indexed). Clamps to valid range. */
+	jumpToPage: (page: number) => void;
+}
+
 export interface HyperJumpViewerProps {
 	/** URL of the PDF file to display */
 	url: string;
-	/** Page number to jump to (0-indexed) */
-	page?: number;
+	/** Page to show when the document first loads (0-indexed) */
+	initialPage?: number;
 	/** Called when the visible page changes (0-indexed) */
 	onPageChange?: (page: number) => void;
+	/** Ref exposing imperative jumpToPage method */
+	ref?: React.Ref<HyperJumpViewerAPI>;
 }
 
 export function HyperJumpViewer(props: HyperJumpViewerProps) {
-	const { url, page, onPageChange } = props;
+	const { url, initialPage, onPageChange, ref } = props;
 	const [document, setDocument] = useState<PDFDocumentProxy>();
 	const [pageIndex, setPageIndex] = useState(0);
 	const [pageDimensions, setPageDimensions] = useState<
@@ -58,25 +72,39 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 		}
 	}, [document, zoomConfig]);
 
-	const scrollToPage = useCallback((index: number) => {
-		listRef.current?.scrollToRow({ index, align: "start" });
-		setPageIndex(index);
-	}, []);
+	const scrollToPage = useCallback(
+		(target: number) => {
+			if (numPages === 0 || pageDimensions.length !== numPages) return;
+			const clamped = Math.max(0, Math.min(Math.floor(target), numPages - 1));
+			listRef.current?.scrollToRow({ index: clamped, align: "start" });
+			setPageIndex(clamped);
+		},
+		[numPages, pageDimensions],
+	);
+
+	useImperativeHandle(ref, () => ({ jumpToPage: scrollToPage }), [
+		scrollToPage,
+	]);
+
+	const hasAppliedInitialPage = useRef(false);
 
 	const onLoadSuccess: OnDocumentLoadSuccess = useCallback((response) => {
+		hasAppliedInitialPage.current = false;
 		setDocument(response);
 	}, []);
 
+	// Scroll to initialPage once when dimensions are first available
 	useEffect(() => {
 		if (
-			page !== undefined &&
+			!hasAppliedInitialPage.current &&
+			initialPage !== undefined &&
 			pageDimensions.length === numPages &&
 			numPages > 0
 		) {
-			const clamped = Math.max(0, Math.min(Math.floor(page), numPages - 1));
-			scrollToPage(clamped);
+			hasAppliedInitialPage.current = true;
+			scrollToPage(initialPage);
 		}
-	}, [page, pageDimensions, numPages, scrollToPage]);
+	}, [initialPage, pageDimensions, numPages, scrollToPage]);
 
 	const file = useMemo(() => {
 		return { url };

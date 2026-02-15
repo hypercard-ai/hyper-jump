@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import { HyperJumpViewer } from "../src";
+import { useRef } from "react";
+import { HyperJumpViewer, type HyperJumpViewerAPI } from "../src";
 
 // Track the most recent scrollToRow call
 const scrollToRow = vi.fn();
@@ -141,9 +142,9 @@ describe("HyperJumpViewer", () => {
 		expect(screen.getByText("1 / 5")).toBeInTheDocument();
 	});
 
-	it("scrolls to the specified page when page prop is provided", async () => {
+	it("scrolls to initialPage when the document loads", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" page={3} />);
+			render(<HyperJumpViewer url="test.pdf" initialPage={3} />);
 		});
 
 		await act(async () => {
@@ -153,10 +154,24 @@ describe("HyperJumpViewer", () => {
 		expect(scrollToRow).toHaveBeenCalledWith({ index: 3, align: "start" });
 	});
 
-	it("scrolls when the page prop changes", async () => {
-		const { rerender } = await act(async () =>
-			render(<HyperJumpViewer url="test.pdf" page={0} />),
-		);
+	it("jumps to a page via the imperative ref", async () => {
+		function Harness() {
+			const ref = useRef<HyperJumpViewerAPI>(null);
+			return (
+				<>
+					<button
+						type="button"
+						data-testid="jump"
+						onClick={() => ref.current?.jumpToPage(4)}
+					/>
+					<HyperJumpViewer url="test.pdf" ref={ref} />
+				</>
+			);
+		}
+
+		await act(async () => {
+			render(<Harness />);
+		});
 
 		await act(async () => {
 			await new Promise((r) => setTimeout(r, 50));
@@ -165,7 +180,7 @@ describe("HyperJumpViewer", () => {
 		scrollToRow.mockClear();
 
 		await act(async () => {
-			rerender(<HyperJumpViewer url="test.pdf" page={4} />);
+			fireEvent.click(screen.getByTestId("jump"));
 		});
 
 		expect(scrollToRow).toHaveBeenCalledWith({ index: 4, align: "start" });
@@ -234,9 +249,9 @@ describe("HyperJumpViewer", () => {
 		expect(screen.getByText("2 / 5")).toBeInTheDocument();
 	});
 
-	it("clamps page prop that exceeds numPages to the last page", async () => {
+	it("clamps initialPage that exceeds numPages to the last page", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" page={100} />);
+			render(<HyperJumpViewer url="test.pdf" initialPage={100} />);
 		});
 
 		await act(async () => {
@@ -246,9 +261,9 @@ describe("HyperJumpViewer", () => {
 		expect(scrollToRow).toHaveBeenCalledWith({ index: 4, align: "start" });
 	});
 
-	it("clamps negative page prop to 0", async () => {
+	it("clamps negative initialPage to 0", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" page={-5} />);
+			render(<HyperJumpViewer url="test.pdf" initialPage={-5} />);
 		});
 
 		await act(async () => {
@@ -258,9 +273,9 @@ describe("HyperJumpViewer", () => {
 		expect(scrollToRow).toHaveBeenCalledWith({ index: 0, align: "start" });
 	});
 
-	it("floors fractional page prop values", async () => {
+	it("floors fractional initialPage values", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" page={2.7} />);
+			render(<HyperJumpViewer url="test.pdf" initialPage={2.7} />);
 		});
 
 		await act(async () => {

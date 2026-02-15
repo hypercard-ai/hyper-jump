@@ -31,28 +31,60 @@ function App() {
 }
 ```
 
-### Jump to a specific page
+### Open a PDF at a specific page
 
-Pass a zero-indexed `page` prop to scroll directly to a page:
+Pass a zero-indexed `initialPage` to start at a specific page when the document loads:
 
 ```tsx
-<HyperJumpViewer url="/path/to/document.pdf" page={3} />
+<HyperJumpViewer url="/path/to/document.pdf" initialPage={3} />
+```
+
+### Jump to a page imperatively
+
+Use a ref to jump to any page at any time — ideal for navigating to RAG citations:
+
+```tsx
+import { useRef } from "react";
+import { HyperJumpViewer, type HyperJumpViewerAPI } from "@hypercard-ai/hyper-jump";
+import "@hypercard-ai/hyper-jump/styles.css";
+
+function App() {
+  const viewerRef = useRef<HyperJumpViewerAPI>(null);
+
+  return (
+    <>
+      <button onClick={() => viewerRef.current?.jumpToPage(5)}>
+        Go to page 6
+      </button>
+      <HyperJumpViewer url="/path/to/document.pdf" ref={viewerRef} />
+    </>
+  );
+}
 ```
 
 ## API
 
 ### `<HyperJumpViewer />`
 
-| Prop   | Type     | Required | Description                         |
-| ------ | -------- | -------- | ----------------------------------- |
-| `url`  | `string` | Yes      | URL or path to the PDF file         |
-| `page` | `number` | No       | Zero-indexed page to scroll to      |
+| Prop           | Type                          | Required | Description                                        |
+| -------------- | ----------------------------- | -------- | -------------------------------------------------- |
+| `url`          | `string`                      | Yes      | URL or path to the PDF file                        |
+| `initialPage`  | `number`                      | No       | Zero-indexed page to show when the document loads  |
+| `onPageChange` | `(page: number) => void`      | No       | Called when the visible page changes (zero-indexed) |
+| `ref`          | `Ref<HyperJumpViewerAPI>`     | No       | Ref exposing imperative `jumpToPage` method        |
+
+### `HyperJumpViewerAPI`
+
+| Method                      | Description                                          |
+| --------------------------- | ---------------------------------------------------- |
+| `jumpToPage(page: number)`  | Scroll to a zero-indexed page. Clamps to valid range.|
 
 ### Exports
 
 | Export                  | Type      | Description                          |
 | ----------------------- | --------- | ------------------------------------ |
 | `HyperJumpViewer`       | Component | The PDF viewer component             |
+| `HyperJumpViewerAPI`    | Type      | Imperative API exposed via ref       |
 | `HyperJumpViewerProps`  | Type      | Props for the viewer component       |
 | `ZoomConfig`            | Type      | Zoom configuration interface         |
 
