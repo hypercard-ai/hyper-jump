@@ -93,7 +93,8 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 		setDocument(response);
 	}, []);
 
-	// Scroll to initialPage once when dimensions are first available
+	// Scroll to initialPage once when dimensions are first available.
+	// Deferred by a frame so the List's scroll container is fully initialized.
 	useEffect(() => {
 		if (
 			!hasAppliedInitialPage.current &&
@@ -102,7 +103,8 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 			numPages > 0
 		) {
 			hasAppliedInitialPage.current = true;
-			scrollToPage(initialPage);
+			const id = requestAnimationFrame(() => scrollToPage(initialPage));
+			return () => cancelAnimationFrame(id);
 		}
 	}, [initialPage, pageDimensions, numPages, scrollToPage]);
 
