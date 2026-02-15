@@ -234,6 +234,42 @@ describe("HyperJumpViewer", () => {
 		expect(screen.getByText("2 / 5")).toBeInTheDocument();
 	});
 
+	it("clamps page prop that exceeds numPages to the last page", async () => {
+		await act(async () => {
+			render(<HyperJumpViewer url="test.pdf" page={100} />);
+		});
+
+		await act(async () => {
+			await new Promise((r) => setTimeout(r, 50));
+		});
+
+		expect(scrollToRow).toHaveBeenCalledWith({ index: 4, align: "start" });
+	});
+
+	it("clamps negative page prop to 0", async () => {
+		await act(async () => {
+			render(<HyperJumpViewer url="test.pdf" page={-5} />);
+		});
+
+		await act(async () => {
+			await new Promise((r) => setTimeout(r, 50));
+		});
+
+		expect(scrollToRow).toHaveBeenCalledWith({ index: 0, align: "start" });
+	});
+
+	it("floors fractional page prop values", async () => {
+		await act(async () => {
+			render(<HyperJumpViewer url="test.pdf" page={2.7} />);
+		});
+
+		await act(async () => {
+			await new Promise((r) => setTimeout(r, 50));
+		});
+
+		expect(scrollToRow).toHaveBeenCalledWith({ index: 2, align: "start" });
+	});
+
 	it("changes zoom level via the select", async () => {
 		await act(async () => {
 			render(<HyperJumpViewer url="test.pdf" />);

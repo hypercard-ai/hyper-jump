@@ -73,7 +73,8 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 			pageDimensions.length === numPages &&
 			numPages > 0
 		) {
-			scrollToPage(page);
+			const clamped = Math.max(0, Math.min(Math.floor(page), numPages - 1));
+			scrollToPage(clamped);
 		}
 	}, [page, pageDimensions, numPages, scrollToPage]);
 
