@@ -1,6 +1,6 @@
 {
 	"name": "@hypercard-ai/hyper-jump",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Document viewer built for RAG",
 	"license": "MIT",
 	"author": "HyperCard AI",

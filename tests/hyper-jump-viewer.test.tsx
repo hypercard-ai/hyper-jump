@@ -275,6 +275,10 @@ describe("HyperJumpViewer", () => {
 			await new Promise((r) => setTimeout(r, 50));
 		});
 
+		await act(async () => {
+			await new Promise((r) => requestAnimationFrame(r));
+		});
+
 		expect(scrollToRow).toHaveBeenCalledWith({
 			index: 4,
 			align: "start",

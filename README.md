@@ -71,6 +71,7 @@ function App() {
 | `url`          | `string`                      | Yes      | URL or path to the PDF file                        |
 | `initialPage`  | `number`                      | No       | Zero-indexed page to show when the document loads  |
 | `onPageChange` | `(page: number) => void`      | No       | Called when the visible page changes (zero-indexed) |
+| `scrollBehavior` | `"auto" \| "instant" \| "smooth"` | No | Scroll behavior when navigating between pages (default: `"instant"`) |
 | `ref`          | `Ref<HyperJumpViewerAPI>`     | No       | Ref exposing imperative `jumpToPage` method        |
 
 ### `HyperJumpViewerAPI`
