@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { type ReactNode, useRef, useState } from "react";
+import { HyperJumpViewer } from "../viewer/viewer";
 import PDFErrorPage from "./error-page";
 import PDFLoadingPage from "./loading-page";
-import { HyperJumpViewer, type HyperJumpViewerAPI } from "./viewer";
+import { PdfRenderer, type HyperJumpPdfViewerAPI } from "./pdf-viewer";
 
 const meta = {
 	title: "HyperJumpViewer/Playground",
@@ -82,9 +83,9 @@ function Container(props: { children: ReactNode }) {
 }
 
 export const CitationJumps: StoryObj<typeof meta> = {
-	args: { url: "" },
+	args: { url: "", renderers: [PdfRenderer] },
 	render: () => {
-		const viewerRef = useRef<HyperJumpViewerAPI>(null);
+		const viewerRef = useRef<HyperJumpPdfViewerAPI>(null);
 		const [currentPage, setCurrentPage] = useState(0);
 		const [activePdf, setActivePdf] = useState(0);
 
@@ -256,6 +257,7 @@ export const CitationJumps: StoryObj<typeof meta> = {
 					<div style={{ flex: 1, minWidth: 0 }}>
 						<HyperJumpViewer
 							url={pdfs[activePdf].url}
+							renderers={[PdfRenderer]}
 							ref={viewerRef}
 							onPageChange={setCurrentPage}
 							scrollBehavior="smooth"
@@ -268,7 +270,7 @@ export const CitationJumps: StoryObj<typeof meta> = {
 };
 
 export const Loading: StoryObj<typeof meta> = {
-	args: { url: "" },
+	args: { url: "", renderers: [PdfRenderer] },
 	render: () => (
 		<Container>
 			<div className="hj-viewer">
@@ -279,7 +281,7 @@ export const Loading: StoryObj<typeof meta> = {
 };
 
 export const ErrorState: StoryObj<typeof meta> = {
-	args: { url: "" },
+	args: { url: "", renderers: [PdfRenderer] },
 	render: () => (
 		<Container>
 			<div className="hj-viewer">

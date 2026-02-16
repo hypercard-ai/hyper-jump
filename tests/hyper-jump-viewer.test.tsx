@@ -1,7 +1,11 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import { useRef } from "react";
-import { HyperJumpViewer, type HyperJumpViewerAPI } from "../src";
+import { HyperJumpViewer } from "../src";
+import {
+	PdfRenderer,
+	type HyperJumpPdfViewerAPI,
+} from "../src/pdf";
 
 // Track the most recent scrollToRow call
 const scrollToRow = vi.fn();
@@ -103,7 +107,7 @@ describe("HyperJumpViewer", () => {
 
 	it("renders the document and controls", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} />);
 		});
 
 		// Wait for async page dimension loading
@@ -119,7 +123,7 @@ describe("HyperJumpViewer", () => {
 
 	it("renders the virtual list after document loads", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} />);
 		});
 
 		await act(async () => {
@@ -132,7 +136,7 @@ describe("HyperJumpViewer", () => {
 
 	it("shows page 1 / 5 initially", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} />);
 		});
 
 		await act(async () => {
@@ -144,7 +148,7 @@ describe("HyperJumpViewer", () => {
 
 	it("scrolls to initialPage when the document loads", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" initialPage={3} />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} initialPage={3} />);
 		});
 
 		await act(async () => {
@@ -165,7 +169,7 @@ describe("HyperJumpViewer", () => {
 
 	it("jumps to a page via the imperative ref", async () => {
 		function Harness() {
-			const ref = useRef<HyperJumpViewerAPI>(null);
+			const ref = useRef<HyperJumpPdfViewerAPI>(null);
 			return (
 				<>
 					<button
@@ -173,7 +177,7 @@ describe("HyperJumpViewer", () => {
 						data-testid="jump"
 						onClick={() => ref.current?.jumpToPage(4)}
 					/>
-					<HyperJumpViewer url="test.pdf" ref={ref} />
+					<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} ref={ref} />
 				</>
 			);
 		}
@@ -203,7 +207,7 @@ describe("HyperJumpViewer", () => {
 		const onPageChange = vi.fn();
 
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" onPageChange={onPageChange} />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} onPageChange={onPageChange} />);
 		});
 
 		await act(async () => {
@@ -223,7 +227,7 @@ describe("HyperJumpViewer", () => {
 		const onPageChange = vi.fn();
 
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" onPageChange={onPageChange} />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} onPageChange={onPageChange} />);
 		});
 
 		await act(async () => {
@@ -242,7 +246,7 @@ describe("HyperJumpViewer", () => {
 
 	it("navigates with prev/next buttons", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} />);
 		});
 
 		await act(async () => {
@@ -268,7 +272,7 @@ describe("HyperJumpViewer", () => {
 
 	it("clamps initialPage that exceeds numPages to the last page", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" initialPage={100} />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} initialPage={100} />);
 		});
 
 		await act(async () => {
@@ -288,7 +292,7 @@ describe("HyperJumpViewer", () => {
 
 	it("clamps negative initialPage to 0", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" initialPage={-5} />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} initialPage={-5} />);
 		});
 
 		await act(async () => {
@@ -308,7 +312,7 @@ describe("HyperJumpViewer", () => {
 
 	it("floors fractional initialPage values", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" initialPage={2.7} />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} initialPage={2.7} />);
 		});
 
 		await act(async () => {
@@ -324,7 +328,7 @@ describe("HyperJumpViewer", () => {
 
 	it("changes zoom level via the select", async () => {
 		await act(async () => {
-			render(<HyperJumpViewer url="test.pdf" />);
+			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} />);
 		});
 
 		await act(async () => {
