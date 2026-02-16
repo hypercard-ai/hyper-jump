@@ -1,6 +1,7 @@
 import { Page } from "react-pdf";
 import type { RowComponentProps } from "react-window";
 import PDFLoadingPage from "./loading-page";
+import "./renderer.css";
 
 interface RowProps {
 	scale: number;

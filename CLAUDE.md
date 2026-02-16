@@ -20,7 +20,7 @@ hyper-jump (`@hypercard-ai/hyper-jump`) is a React PDF viewer component built fo
 - `src/utils.ts` - Page dimension calculations
 - `src/types.ts` - Shared types (`ZoomConfig`)
 - `src/constants.ts` - PDF dimension constants
-- `src/styles.css` - All component styles (BEM convention with `hj-` prefix)
+- `src/*.css` - Co-located per-component styles (BEM convention with `hj-` prefix)
 
 ## Conventions
 

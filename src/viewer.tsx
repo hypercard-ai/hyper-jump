@@ -16,7 +16,7 @@ import PDFViewerControls from "./controls";
 import PDFErrorPage from "./error-page";
 import PDFLoadingPage from "./loading-page";
 import PDFPageRenderer from "./renderer";
-import "./styles.css";
+import "./viewer.css";
 import type { ZoomConfig } from "./types";
 import { useElementSize } from "./use-element-size";
 import { getPageDimensions } from "./utils";

@@ -1,0 +1,20 @@
+/* HyperJump Viewer */
+
+.hj-viewer {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+.hj-viewer .react-pdf__Document {
+	height: 100%;
+	width: 100%;
+}
+
+.hj-viewer .react-pdf__message {
+	height: 100%;
+}

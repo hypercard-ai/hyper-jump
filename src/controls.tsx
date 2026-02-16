@@ -1,3 +1,4 @@
+import "./controls.css";
 import type { ZoomConfig } from "./types";
 
 const ZOOM_OPTIONS = [

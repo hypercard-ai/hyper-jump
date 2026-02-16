@@ -1,0 +1,11 @@
+/* Page renderer */
+
+.hj-page {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.hj-page .react-pdf__Page {
+	height: 100%;
+}
