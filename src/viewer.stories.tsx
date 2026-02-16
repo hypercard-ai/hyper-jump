@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useRef, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import PDFErrorPage from "./error-page";
 import PDFLoadingPage from "./loading-page";
 import "./styles.css";
@@ -74,6 +74,14 @@ const citations = [
 	},
 ];
 
+function Container(props: { children: ReactNode }) {
+	return (
+		<div style={{ height: "90vh", width: "90vw", backgroundColor: "#f1f3f5" }}>
+			{props.children}
+		</div>
+	);
+}
+
 export const CitationJumps: StoryObj<typeof meta> = {
 	args: { url: "" },
 	render: () => {
@@ -92,168 +100,170 @@ export const CitationJumps: StoryObj<typeof meta> = {
 		};
 
 		return (
-			<div style={{ display: "flex", height: "90vh", width: "100%", gap: 0 }}>
-				<div
-					style={{
-						width: 280,
-						flexShrink: 0,
-						borderRight: "1px solid #e0e0e0",
-						padding: 16,
-						overflowY: "auto",
-						fontFamily: "system-ui, sans-serif",
-						fontSize: 14,
-					}}
-				>
-					<h3 style={{ margin: "0 0 4px" }}>Citations</h3>
-					<p style={{ margin: "0 0 12px", color: "#666", fontSize: 12 }}>
-						Click to jump — citations span two PDFs
-					</p>
-					{citations.map((c, i) => {
-						const isActive = activePdf === c.pdf && currentPage === c.page;
-						const pdfColor = c.pdf === 0 ? "#2563eb" : "#9333ea";
-						return (
-							<button
-								type="button"
-								key={`${c.pdf}-${c.page}-${i}`}
-								onClick={() => handleCitation(c.pdf, c.page)}
-								style={{
-									display: "block",
-									width: "100%",
-									textAlign: "left",
-									padding: "10px 12px",
-									marginBottom: 6,
-									border: isActive
-										? `1px solid ${pdfColor}`
-										: "1px solid #e0e0e0",
-									borderRadius: 6,
-									background: isActive
-										? c.pdf === 0
-											? "#eff6ff"
-											: "#faf5ff"
-										: "#fff",
-									cursor: "pointer",
-									transition: "all 0.15s",
-								}}
-							>
-								<div
+			<Container>
+				<div style={{ display: "flex", height: "90vh", width: "100%", gap: 0 }}>
+					<div
+						style={{
+							width: 280,
+							flexShrink: 0,
+							borderRight: "1px solid #e0e0e0",
+							padding: 16,
+							overflowY: "auto",
+							fontFamily: "system-ui, sans-serif",
+							fontSize: 14,
+						}}
+					>
+						<h3 style={{ margin: "0 0 4px" }}>Citations</h3>
+						<p style={{ margin: "0 0 12px", color: "#666", fontSize: 12 }}>
+							Click to jump — citations span two PDFs
+						</p>
+						{citations.map((c, i) => {
+							const isActive = activePdf === c.pdf && currentPage === c.page;
+							const pdfColor = c.pdf === 0 ? "#2563eb" : "#9333ea";
+							return (
+								<button
+									type="button"
+									key={`${c.pdf}-${c.page}-${i}`}
+									onClick={() => handleCitation(c.pdf, c.page)}
 									style={{
-										display: "flex",
-										alignItems: "center",
-										gap: 6,
+										display: "block",
+										width: "100%",
+										textAlign: "left",
+										padding: "10px 12px",
+										marginBottom: 6,
+										border: isActive
+											? `1px solid ${pdfColor}`
+											: "1px solid #e0e0e0",
+										borderRadius: 6,
+										background: isActive
+											? c.pdf === 0
+												? "#eff6ff"
+												: "#faf5ff"
+											: "#fff",
+										cursor: "pointer",
+										transition: "all 0.15s",
 									}}
 								>
-									<span
+									<div
 										style={{
-											fontSize: 10,
-											padding: "1px 5px",
-											borderRadius: 3,
-											background: pdfColor,
-											color: "#fff",
-											flexShrink: 0,
+											display: "flex",
+											alignItems: "center",
+											gap: 6,
 										}}
 									>
-										{pdfs[c.pdf].label}
-									</span>
-									<span style={{ fontWeight: 600 }}>
-										p. {c.page + 1} — {c.label}
-									</span>
-								</div>
-								<div
-									style={{
-										color: "#666",
-										fontSize: 12,
-										marginTop: 2,
-									}}
-								>
-									{c.snippet}
-								</div>
-							</button>
-						);
-					})}
+										<span
+											style={{
+												fontSize: 10,
+												padding: "1px 5px",
+												borderRadius: 3,
+												background: pdfColor,
+												color: "#fff",
+												flexShrink: 0,
+											}}
+										>
+											{pdfs[c.pdf].label}
+										</span>
+										<span style={{ fontWeight: 600 }}>
+											p. {c.page + 1} — {c.label}
+										</span>
+									</div>
+									<div
+										style={{
+											color: "#666",
+											fontSize: 12,
+											marginTop: 2,
+										}}
+									>
+										{c.snippet}
+									</div>
+								</button>
+							);
+						})}
 
-					<hr
-						style={{
-							margin: "16px 0",
-							border: "none",
-							borderTop: "1px solid #e0e0e0",
-						}}
-					/>
-
-					<h3 style={{ margin: "0 0 8px" }}>Jump to page</h3>
-					<div style={{ display: "flex", gap: 6 }}>
-						<input
-							id="page-input"
-							type="number"
-							min={1}
-							placeholder="Page #"
+						<hr
 							style={{
-								flex: 1,
-								padding: "6px 8px",
-								border: "1px solid #e0e0e0",
-								borderRadius: 4,
-								fontSize: 14,
+								margin: "16px 0",
+								border: "none",
+								borderTop: "1px solid #e0e0e0",
 							}}
-							onKeyDown={(e) => {
-								if (e.key === "Enter") {
-									const val = Number.parseInt(
-										(e.target as HTMLInputElement).value,
-										10,
-									);
+						/>
+
+						<h3 style={{ margin: "0 0 8px" }}>Jump to page</h3>
+						<div style={{ display: "flex", gap: 6 }}>
+							<input
+								id="page-input"
+								type="number"
+								min={1}
+								placeholder="Page #"
+								style={{
+									flex: 1,
+									padding: "6px 8px",
+									border: "1px solid #e0e0e0",
+									borderRadius: 4,
+									fontSize: 14,
+								}}
+								onKeyDown={(e) => {
+									if (e.key === "Enter") {
+										const val = Number.parseInt(
+											(e.target as HTMLInputElement).value,
+											10,
+										);
+										if (!Number.isNaN(val)) {
+											viewerRef.current?.jumpToPage(val - 1);
+										}
+									}
+								}}
+							/>
+							<button
+								type="button"
+								onClick={() => {
+									const input = document.getElementById(
+										"page-input",
+									) as HTMLInputElement;
+									const val = Number.parseInt(input.value, 10);
 									if (!Number.isNaN(val)) {
 										viewerRef.current?.jumpToPage(val - 1);
 									}
-								}
-							}}
-						/>
-						<button
-							type="button"
-							onClick={() => {
-								const input = document.getElementById(
-									"page-input",
-								) as HTMLInputElement;
-								const val = Number.parseInt(input.value, 10);
-								if (!Number.isNaN(val)) {
-									viewerRef.current?.jumpToPage(val - 1);
-								}
-							}}
+								}}
+								style={{
+									padding: "6px 12px",
+									border: "1px solid #e0e0e0",
+									borderRadius: 4,
+									background: "#fff",
+									cursor: "pointer",
+									fontSize: 14,
+								}}
+							>
+								Go
+							</button>
+						</div>
+
+						<div
 							style={{
-								padding: "6px 12px",
-								border: "1px solid #e0e0e0",
-								borderRadius: 4,
-								background: "#fff",
-								cursor: "pointer",
-								fontSize: 14,
+								marginTop: 16,
+								padding: "8px 12px",
+								background: "#f5f5f5",
+								borderRadius: 6,
+								fontSize: 12,
+								color: "#666",
 							}}
 						>
-							Go
-						</button>
+							Viewing: <strong>{pdfs[activePdf].label}</strong>
+							<br />
+							Current page: <strong>{currentPage + 1}</strong>
+						</div>
 					</div>
 
-					<div
-						style={{
-							marginTop: 16,
-							padding: "8px 12px",
-							background: "#f5f5f5",
-							borderRadius: 6,
-							fontSize: 12,
-							color: "#666",
-						}}
-					>
-						Viewing: <strong>{pdfs[activePdf].label}</strong>
-						<br />
-						Current page: <strong>{currentPage + 1}</strong>
+					<div style={{ flex: 1, minWidth: 0 }}>
+						<HyperJumpViewer
+							url={pdfs[activePdf].url}
+							ref={viewerRef}
+							onPageChange={setCurrentPage}
+							scrollBehavior="smooth"
+						/>
 					</div>
 				</div>
-
-				<div style={{ flex: 1, minWidth: 0, backgroundColor: "#000" }}>
-					<HyperJumpViewer
-						url={pdfs[activePdf].url}
-						ref={viewerRef}
-						onPageChange={setCurrentPage}
-						scrollBehavior="smooth"
-					/>
-				</div>
-			</div>
+			</Container>
 		);
 	},
 };
@@ -261,17 +271,21 @@ export const CitationJumps: StoryObj<typeof meta> = {
 export const Loading: StoryObj<typeof meta> = {
 	args: { url: "" },
 	render: () => (
-		<div className="hj-viewer" style={{ height: "100%" }}>
-			<PDFLoadingPage />
-		</div>
+		<Container>
+			<div className="hj-viewer">
+				<PDFLoadingPage />
+			</div>
+		</Container>
 	),
 };
 
 export const ErrorState: StoryObj<typeof meta> = {
 	args: { url: "" },
 	render: () => (
-		<div className="hj-viewer" style={{ height: "100vh" }}>
-			<PDFErrorPage />
-		</div>
+		<Container>
+			<div className="hj-viewer">
+				<PDFErrorPage />
+			</div>
+		</Container>
 	),
 };
