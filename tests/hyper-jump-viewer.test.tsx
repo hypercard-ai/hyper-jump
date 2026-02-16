@@ -156,7 +156,11 @@ describe("HyperJumpViewer", () => {
 			await new Promise((r) => requestAnimationFrame(r));
 		});
 
-		expect(scrollToRow).toHaveBeenCalledWith({ index: 3, align: "start" });
+		expect(scrollToRow).toHaveBeenCalledWith({
+			index: 3,
+			align: "start",
+			behavior: "instant",
+		});
 	});
 
 	it("jumps to a page via the imperative ref", async () => {
@@ -188,7 +192,11 @@ describe("HyperJumpViewer", () => {
 			fireEvent.click(screen.getByTestId("jump"));
 		});
 
-		expect(scrollToRow).toHaveBeenCalledWith({ index: 4, align: "start" });
+		expect(scrollToRow).toHaveBeenCalledWith({
+			index: 4,
+			align: "start",
+			behavior: "instant",
+		});
 	});
 
 	it("calls onPageChange when the visible page changes via scroll", async () => {
@@ -250,7 +258,11 @@ describe("HyperJumpViewer", () => {
 			fireEvent.click(screen.getByLabelText("Next Page"));
 		});
 
-		expect(scrollToRow).toHaveBeenCalledWith({ index: 1, align: "start" });
+		expect(scrollToRow).toHaveBeenCalledWith({
+			index: 1,
+			align: "start",
+			behavior: "instant",
+		});
 		expect(screen.getByText("2 / 5")).toBeInTheDocument();
 	});
 
@@ -263,7 +275,11 @@ describe("HyperJumpViewer", () => {
 			await new Promise((r) => setTimeout(r, 50));
 		});
 
-		expect(scrollToRow).toHaveBeenCalledWith({ index: 4, align: "start" });
+		expect(scrollToRow).toHaveBeenCalledWith({
+			index: 4,
+			align: "start",
+			behavior: "instant",
+		});
 	});
 
 	it("clamps negative initialPage to 0", async () => {
@@ -275,7 +291,15 @@ describe("HyperJumpViewer", () => {
 			await new Promise((r) => setTimeout(r, 50));
 		});
 
-		expect(scrollToRow).toHaveBeenCalledWith({ index: 0, align: "start" });
+		await act(async () => {
+			await new Promise((r) => requestAnimationFrame(r));
+		});
+
+		expect(scrollToRow).toHaveBeenCalledWith({
+			index: 0,
+			align: "start",
+			behavior: "instant",
+		});
 	});
 
 	it("floors fractional initialPage values", async () => {
@@ -287,7 +311,11 @@ describe("HyperJumpViewer", () => {
 			await new Promise((r) => setTimeout(r, 50));
 		});
 
-		expect(scrollToRow).toHaveBeenCalledWith({ index: 2, align: "start" });
+		expect(scrollToRow).toHaveBeenCalledWith({
+			index: 2,
+			align: "start",
+			behavior: "instant",
+		});
 	});
 
 	it("changes zoom level via the select", async () => {

@@ -33,6 +33,8 @@ export interface HyperJumpViewerAPI {
 	jumpToPage: (page: number) => void;
 }
 
+export type ScrollBehavior = "auto" | "instant" | "smooth";
+
 export interface HyperJumpViewerProps {
 	/** URL of the PDF file to display */
 	url: string;
@@ -40,12 +42,20 @@ export interface HyperJumpViewerProps {
 	initialPage?: number;
 	/** Called when the visible page changes (0-indexed) */
 	onPageChange?: (page: number) => void;
+	/** Scroll behavior when navigating between pages (default: "instant") */
+	scrollBehavior?: ScrollBehavior;
 	/** Ref exposing imperative jumpToPage method */
 	ref?: React.Ref<HyperJumpViewerAPI>;
 }
 
 export function HyperJumpViewer(props: HyperJumpViewerProps) {
-	const { url, initialPage, onPageChange, ref } = props;
+	const {
+		url,
+		initialPage,
+		onPageChange,
+		scrollBehavior = "instant",
+		ref,
+	} = props;
 	const [document, setDocument] = useState<PDFDocumentProxy>();
 	const [pageIndex, setPageIndex] = useState(0);
 	const [pageDimensions, setPageDimensions] = useState<
@@ -76,10 +86,14 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 		(target: number) => {
 			if (numPages === 0 || pageDimensions.length !== numPages) return;
 			const clamped = Math.max(0, Math.min(Math.floor(target), numPages - 1));
-			listRef.current?.scrollToRow({ index: clamped, align: "start" });
+			listRef.current?.scrollToRow({
+				index: clamped,
+				align: "start",
+				behavior: scrollBehavior,
+			});
 			setPageIndex(clamped);
 		},
-		[numPages, pageDimensions],
+		[numPages, pageDimensions, scrollBehavior],
 	);
 
 	useImperativeHandle(ref, () => ({ jumpToPage: scrollToPage }), [
@@ -115,18 +129,26 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 	const onPrevPage = useCallback(() => {
 		if (pageIndex > 0) {
 			const newPageIndex = pageIndex - 1;
-			listRef.current?.scrollToRow({ index: newPageIndex, align: "start" });
+			listRef.current?.scrollToRow({
+				index: newPageIndex,
+				align: "start",
+				behavior: scrollBehavior,
+			});
 			setPageIndex(newPageIndex);
 		}
-	}, [pageIndex]);
+	}, [pageIndex, scrollBehavior]);
 
 	const onNextPage = useCallback(() => {
 		if (pageIndex < numPages - 1) {
 			const newPageIndex = pageIndex + 1;
-			listRef.current?.scrollToRow({ index: newPageIndex, align: "start" });
+			listRef.current?.scrollToRow({
+				index: newPageIndex,
+				align: "start",
+				behavior: scrollBehavior,
+			});
 			setPageIndex(newPageIndex);
 		}
-	}, [pageIndex, numPages]);
+	}, [pageIndex, numPages, scrollBehavior]);
 
 	const onChangeZoom = useCallback((value: string) => {
 		if (value === "automatic") {

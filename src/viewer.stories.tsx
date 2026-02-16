@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useRef, useState } from "react";
-import PDFErrorPage from "../error-page";
-import PDFLoadingPage from "../loading-page";
-import { HyperJumpViewer, type HyperJumpViewerAPI } from "../viewer";
+import PDFErrorPage from "./error-page";
+import PDFLoadingPage from "./loading-page";
 import "./styles.css";
+import { HyperJumpViewer, type HyperJumpViewerAPI } from "./viewer";
 
 const meta = {
 	title: "HyperJumpViewer/Playground",
@@ -92,7 +92,7 @@ export const CitationJumps: StoryObj<typeof meta> = {
 		};
 
 		return (
-			<div style={{ display: "flex", height: "100vh", gap: 0 }}>
+			<div style={{ display: "flex", height: "90vh", width: "100%", gap: 0 }}>
 				<div
 					style={{
 						width: 280,
@@ -245,11 +245,12 @@ export const CitationJumps: StoryObj<typeof meta> = {
 					</div>
 				</div>
 
-				<div style={{ flex: 1, minWidth: 0 }}>
+				<div style={{ flex: 1, minWidth: 0, backgroundColor: "#000" }}>
 					<HyperJumpViewer
 						url={pdfs[activePdf].url}
 						ref={viewerRef}
 						onPageChange={setCurrentPage}
+						scrollBehavior="smooth"
 					/>
 				</div>
 			</div>
@@ -273,37 +274,4 @@ export const ErrorState: StoryObj<typeof meta> = {
 			<PDFErrorPage />
 		</div>
 	),
-};
-
-export const InitialPage: StoryObj<typeof meta> = {
-	args: { url: "" },
-	render: () => {
-		const [currentPage, setCurrentPage] = useState<number | null>(null);
-
-		return (
-			<div style={{ height: "100vh", position: "relative" }}>
-				<HyperJumpViewer
-					url="/hypercard_ai_overview.pdf"
-					initialPage={3}
-					onPageChange={setCurrentPage}
-				/>
-				<div
-					style={{
-						position: "absolute",
-						top: 8,
-						right: 8,
-						padding: "6px 12px",
-						background: "rgba(0,0,0,0.7)",
-						color: "#fff",
-						borderRadius: 6,
-						fontSize: 13,
-						fontFamily: "system-ui, sans-serif",
-					}}
-				>
-					initialPage=3 | current:{" "}
-					{currentPage !== null ? currentPage + 1 : "..."}
-				</div>
-			</div>
-		);
-	},
 };
