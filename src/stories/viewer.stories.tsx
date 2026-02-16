@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useRef, useState } from "react";
-import { HyperJumpViewer, type HyperJumpViewerAPI } from "./viewer";
+import PDFErrorPage from "../error-page";
+import PDFLoadingPage from "../loading-page";
+import { HyperJumpViewer, type HyperJumpViewerAPI } from "../viewer";
+import "./styles.css";
 
 const meta = {
 	title: "HyperJumpViewer/Playground",
@@ -252,6 +255,24 @@ export const CitationJumps: StoryObj<typeof meta> = {
 			</div>
 		);
 	},
+};
+
+export const Loading: StoryObj<typeof meta> = {
+	args: { url: "" },
+	render: () => (
+		<div className="hj-viewer" style={{ height: "100%" }}>
+			<PDFLoadingPage />
+		</div>
+	),
+};
+
+export const ErrorState: StoryObj<typeof meta> = {
+	args: { url: "" },
+	render: () => (
+		<div className="hj-viewer" style={{ height: "100vh" }}>
+			<PDFErrorPage />
+		</div>
+	),
 };
 
 export const InitialPage: StoryObj<typeof meta> = {
