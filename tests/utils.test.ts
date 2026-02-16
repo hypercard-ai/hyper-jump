@@ -1,6 +1,6 @@
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import { PAGE_HEIGHT, PAGE_WIDTH } from "../src/constants";
-import { getPageDimensions } from "../src/utils";
+import { PAGE_HEIGHT, PAGE_WIDTH } from "../src/lib/constants";
+import { getPageDimensions } from "../src/lib/utils";
 
 function mockDocument(
 	pages: { width: number; height: number }[],

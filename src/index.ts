@@ -1,7 +1,7 @@
-export type { ZoomConfig } from "./types";
+export type { ZoomConfig } from "./lib/types";
 export type {
 	HyperJumpViewerAPI,
 	HyperJumpViewerProps,
 	ScrollBehavior,
-} from "./viewer";
-export { HyperJumpViewer } from "./viewer";
+} from "./viewer/viewer";
+export { HyperJumpViewer } from "./viewer/viewer";

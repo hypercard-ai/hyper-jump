@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import PDFViewerControls from "../src/controls";
+import PDFViewerControls from "../src/viewer/controls";
 
 const defaultProps = {
 	pageIndex: 0,

@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { type ReactNode, useRef, useState } from "react";
 import PDFErrorPage from "./error-page";
 import PDFLoadingPage from "./loading-page";
-import "./styles.css";
 import { HyperJumpViewer, type HyperJumpViewerAPI } from "./viewer";
 
 const meta = {

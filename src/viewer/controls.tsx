@@ -1,5 +1,5 @@
 import "./controls.css";
-import type { ZoomConfig } from "./types";
+import type { ZoomConfig } from "../lib/types";
 
 const ZOOM_OPTIONS = [
 	{ label: "Auto Width", value: "automatic" },

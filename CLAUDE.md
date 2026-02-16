@@ -13,14 +13,17 @@ hyper-jump (`@hypercard-ai/hyper-jump`) is a React PDF viewer component built fo
 
 ## Architecture
 
-- `src/viewer.tsx` - Main `HyperJumpViewer` component (orchestrates document loading, zoom, navigation)
-- `src/controls.tsx` - Navigation and zoom controls UI
-- `src/renderer.tsx` - Individual page renderer (row component for react-window)
-- `src/use-element-size.ts` - ResizeObserver hook for responsive sizing
-- `src/utils.ts` - Page dimension calculations
-- `src/types.ts` - Shared types (`ZoomConfig`)
-- `src/constants.ts` - PDF dimension constants
-- `src/*.css` - Co-located per-component styles (BEM convention with `hj-` prefix)
+- `src/index.ts` - Public API exports
+- `src/viewer/` - All viewer components with co-located CSS
+  - `viewer.tsx` - Main `HyperJumpViewer` component (orchestrates document loading, zoom, navigation)
+  - `controls.tsx` - Navigation and zoom controls UI
+  - `renderer.tsx` - Individual page renderer (row component for react-window)
+  - `loading-page.tsx` / `error-page.tsx` - Loading and error states
+- `src/lib/` - Shared utilities
+  - `types.ts` - Shared types (`ZoomConfig`)
+  - `constants.ts` - PDF dimension constants
+  - `utils.ts` - Page dimension calculations
+  - `use-element-size.ts` - ResizeObserver hook for responsive sizing
 
 ## Conventions
 

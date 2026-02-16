@@ -17,9 +17,9 @@ import PDFErrorPage from "./error-page";
 import PDFLoadingPage from "./loading-page";
 import PDFPageRenderer from "./renderer";
 import "./viewer.css";
-import type { ZoomConfig } from "./types";
-import { useElementSize } from "./use-element-size";
-import { getPageDimensions } from "./utils";
+import type { ZoomConfig } from "../lib/types";
+import { useElementSize } from "../lib/use-element-size";
+import { getPageDimensions } from "../lib/utils";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	"pdfjs-dist/build/pdf.worker.min.mjs",
