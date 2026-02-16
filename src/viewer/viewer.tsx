@@ -1,15 +1,19 @@
-import { forwardRef, useMemo } from "react";
+import { useMemo } from "react";
 import type { FileRenderer } from "../lib/types";
 import { useElementSize } from "../lib/use-element-size";
 import "./viewer.css";
 
-export interface HyperJumpViewerProps extends Record<string, unknown> {
+export interface HyperJumpViewerProps {
 	/** URL of the file to display */
 	url: string;
 	/** Explicit file type override (e.g. "pdf", "video"). If omitted, detected from URL extension. */
 	type?: string;
 	/** Renderers that this viewer can use. The first matching renderer wins. */
 	renderers: FileRenderer[];
+	/** Ref forwarded to the active renderer (e.g. for imperative APIs like jumpToPage). */
+	ref?: React.Ref<unknown>;
+	/** All other props are forwarded to the matched renderer. */
+	[key: string]: unknown;
 }
 
 function getExtension(url: string): string | null {
@@ -23,11 +27,8 @@ function getExtension(url: string): string | null {
 	}
 }
 
-export const HyperJumpViewer = forwardRef(function HyperJumpViewer(
-	props: HyperJumpViewerProps,
-	ref: React.ForwardedRef<unknown>,
-) {
-	const { url, type, renderers, ...rest } = props;
+export function HyperJumpViewer(props: HyperJumpViewerProps) {
+	const { url, type, renderers, ref, ...rest } = props;
 
 	const {
 		ref: containerRef,
@@ -56,4 +57,4 @@ export const HyperJumpViewer = forwardRef(function HyperJumpViewer(
 			)}
 		</div>
 	);
-});
+}

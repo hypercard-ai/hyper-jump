@@ -3,7 +3,7 @@ import { type ReactNode, useRef, useState } from "react";
 import { HyperJumpViewer } from "../viewer/viewer";
 import PDFErrorPage from "./error-page";
 import PDFLoadingPage from "./loading-page";
-import { PdfRenderer, type HyperJumpPdfViewerAPI } from "./pdf-viewer";
+import { type HyperJumpPdfViewerAPI, PdfRenderer } from "./pdf-viewer";
 
 const meta = {
 	title: "HyperJumpViewer/Playground",

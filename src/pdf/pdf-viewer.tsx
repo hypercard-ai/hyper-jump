@@ -48,12 +48,7 @@ const PdfViewerComponent = forwardRef<
 	HyperJumpPdfViewerAPI,
 	HyperJumpPdfViewerProps
 >(function PdfViewerComponent(props, ref) {
-	const {
-		url,
-		initialPage,
-		onPageChange,
-		scrollBehavior = "instant",
-	} = props;
+	const { url, initialPage, onPageChange, scrollBehavior = "instant" } = props;
 	const [document, setDocument] = useState<PDFDocumentProxy>();
 	const [pageIndex, setPageIndex] = useState(0);
 	const [pageDimensions, setPageDimensions] = useState<
