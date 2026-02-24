@@ -10,9 +10,9 @@ Renderers are opt-in — only bundle what you use.
 
 ## Features
 
-- **Pluggable renderers** — import only the file types you need (PDF today, video and more coming soon)
+- **Pluggable renderers** — import only the file types you need (PDF, video, and more coming soon)
 - Virtualized rendering via `react-window` for smooth viewing of large PDFs
-- Jump-to-page navigation for instant access to cited content
+- Unified `jump()` API for instant navigation to cited content across all file types
 - Zoom controls with preset levels and automatic fit-to-width
 - Responsive layout that adapts to container size
 - Lightweight, self-contained CSS with no external styling dependencies
@@ -22,9 +22,12 @@ Renderers are opt-in — only bundle what you use.
 ```bash
 # Core + PDF renderer
 npm install @hypercard-ai/hyper-jump react-pdf react-window
+
+# Core + Video renderer
+npm install @hypercard-ai/hyper-jump @vidstack/react
 ```
 
-`react-pdf` and `react-window` are optional peer dependencies — only required when using `PdfRenderer`.
+Renderer dependencies are optional peer dependencies — only install those needed by the renderers you use.
 
 ## Usage
 
@@ -42,33 +45,33 @@ function App() {
 }
 ```
 
-### Open a PDF at a specific page
+### Open at a specific position
 
-Pass a zero-indexed `initialPage` to start at a specific page when the document loads:
+Pass `initialPosition` to start at a specific location when the file loads. The meaning depends on the renderer — page index for PDF, seconds for video:
 
 ```tsx
-<HyperJumpViewer
-  url="/path/to/document.pdf"
-  renderers={[PdfRenderer]}
-  initialPage={3}
-/>
+// PDF: open at page 4 (0-indexed)
+<HyperJumpViewer url="/doc.pdf" renderers={[PdfRenderer]} initialPosition={3} />
+
+// Video: start at 30 seconds
+<HyperJumpViewer url="/clip.mp4" renderers={[VideoRenderer]} initialPosition={30} />
 ```
 
-### Jump to a page imperatively
+### Jump to a position imperatively
 
-Use a ref to jump to any page at any time — ideal for navigating to RAG citations:
+Use a ref to jump to any position at any time — ideal for navigating to RAG citations. The `jump()` method works the same across all renderers:
 
 ```tsx
 import { useRef } from "react";
-import { HyperJumpViewer } from "@hypercard-ai/hyper-jump";
-import { PdfRenderer, type HyperJumpPdfViewerAPI } from "@hypercard-ai/hyper-jump/pdf";
+import { HyperJumpViewer, type HyperJumpAPI } from "@hypercard-ai/hyper-jump";
+import { PdfRenderer } from "@hypercard-ai/hyper-jump/pdf";
 
 function App() {
-  const viewerRef = useRef<HyperJumpPdfViewerAPI>(null);
+  const viewerRef = useRef<HyperJumpAPI>(null);
 
   return (
     <>
-      <button onClick={() => viewerRef.current?.jumpToPage(5)}>
+      <button onClick={() => viewerRef.current?.jump(5)}>
         Go to page 6
       </button>
       <HyperJumpViewer
@@ -92,27 +95,62 @@ The core component. It detects the file type from the URL extension (or an expli
 | `url` | `string` | Yes | URL or path to the file |
 | `renderers` | `FileRenderer[]` | Yes | Renderers the viewer can use (first match wins) |
 | `type` | `string` | No | Explicit file type override (e.g. `"pdf"`). If omitted, detected from URL extension |
-| `ref` | `Ref<unknown>` | No | Forwarded to the active renderer for imperative APIs |
+| `ref` | `Ref<HyperJumpAPI>` | No | Forwarded to the active renderer for the `jump()` API |
 
 All other props are forwarded to the matched renderer.
+
+### Shared props
+
+These props are supported by all renderers with consistent names:
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `initialPosition` | `number` | Position to start at when the file loads (page index for PDF, seconds for video) |
+| `onPositionChange` | `(position: number) => void` | Called when the current position changes |
+
+### `HyperJumpAPI` (exposed via ref)
+
+All renderers expose the same imperative API:
+
+| Method | Description |
+| --- | --- |
+| `jump(position: number)` | Jump to a position. Page index for PDF (0-indexed, clamped), seconds for video. |
 
 ### PDF Renderer
 
 Imported from `@hypercard-ai/hyper-jump/pdf`. Requires `react-pdf` and `react-window` as peer dependencies.
 
-#### PDF-specific props (forwarded through `HyperJumpViewer`)
+#### PDF-specific props
 
 | Prop | Type | Required | Description |
 | --- | --- | --- | --- |
-| `initialPage` | `number` | No | Zero-indexed page to show when the document loads |
-| `onPageChange` | `(page: number) => void` | No | Called when the visible page changes (zero-indexed) |
 | `scrollBehavior` | `"auto" \| "instant" \| "smooth"` | No | Scroll behavior when navigating between pages (default: `"instant"`) |
 
-#### `HyperJumpPdfViewerAPI` (exposed via ref)
+### Video Renderer
 
-| Method | Description |
-| --- | --- |
-| `jumpToPage(page: number)` | Scroll to a zero-indexed page. Clamps to valid range. |
+Imported from `@hypercard-ai/hyper-jump/video`. Requires `@vidstack/react` as a peer dependency.
+
+```tsx
+import { HyperJumpViewer } from "@hypercard-ai/hyper-jump";
+import { VideoRenderer } from "@hypercard-ai/hyper-jump/video";
+import "@hypercard-ai/hyper-jump/video/styles.css";
+
+function App() {
+  return (
+    <HyperJumpViewer
+      url="/path/to/video.mp4"
+      renderers={[VideoRenderer]}
+    />
+  );
+}
+```
+
+#### Video-specific props
+
+| Prop | Type | Required | Description |
+| --- | --- | --- | --- |
+| `title` | `string` | No | Video title shown by the player |
+| `autoPlay` | `boolean` | No | Whether the video should autoplay (default: `false`) |
 
 ### Exports
 
@@ -122,6 +160,7 @@ Imported from `@hypercard-ai/hyper-jump/pdf`. Requires `react-pdf` and `react-wi
 | --- | --- | --- |
 | `HyperJumpViewer` | Component | The core viewer component |
 | `HyperJumpViewerProps` | Type | Props for the viewer component |
+| `HyperJumpAPI` | Type | Shared imperative API (`jump`) exposed via ref |
 | `FileRenderer` | Type | Renderer descriptor interface |
 | `RendererProps` | Type | Base props every renderer receives |
 | `ZoomConfig` | Type | Zoom configuration interface |
@@ -131,9 +170,17 @@ Imported from `@hypercard-ai/hyper-jump/pdf`. Requires `react-pdf` and `react-wi
 | Export | Type | Description |
 | --- | --- | --- |
 | `PdfRenderer` | `FileRenderer` | Renderer descriptor for PDF files |
-| `HyperJumpPdfViewerAPI` | Type | Imperative API exposed via ref |
+| `HyperJumpPdfViewerAPI` | Type | Alias for `HyperJumpAPI` |
 | `HyperJumpPdfViewerProps` | Type | Full props for the PDF renderer |
 | `ScrollBehavior` | Type | Scroll behavior union type |
+
+#### `@hypercard-ai/hyper-jump/video`
+
+| Export | Type | Description |
+| --- | --- | --- |
+| `VideoRenderer` | `FileRenderer` | Renderer descriptor for video files |
+| `HyperJumpVideoViewerAPI` | Type | Alias for `HyperJumpAPI` |
+| `HyperJumpVideoViewerProps` | Type | Full props for the video renderer |
 
 ### Creating a custom renderer
 
@@ -158,6 +205,7 @@ const MyVideoRenderer: FileRenderer = {
 - React 19+
 - react-pdf 10+ (when using `PdfRenderer`)
 - react-window 2+ (when using `PdfRenderer`)
+- @vidstack/react 1+ (when using `VideoRenderer`)
 
 ## Development
 

@@ -143,13 +143,13 @@ describe("HyperJumpViewer", () => {
 		expect(screen.getByText("1 / 5")).toBeInTheDocument();
 	});
 
-	it("scrolls to initialPage when the document loads", async () => {
+	it("scrolls to initialPosition when the document loads", async () => {
 		await act(async () => {
 			render(
 				<HyperJumpViewer
 					url="test.pdf"
 					renderers={[PdfRenderer]}
-					initialPage={3}
+					initialPosition={3}
 				/>,
 			);
 		});
@@ -183,7 +183,7 @@ describe("HyperJumpViewer", () => {
 					<button
 						type="button"
 						data-testid="jump"
-						onClick={() => ref.current?.jumpToPage(4)}
+						onClick={() => ref.current?.jump(4)}
 					/>
 					<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} ref={ref} />
 				</>
@@ -211,15 +211,15 @@ describe("HyperJumpViewer", () => {
 		});
 	});
 
-	it("calls onPageChange when the visible page changes via scroll", async () => {
-		const onPageChange = vi.fn();
+	it("calls onPositionChange when the visible page changes via scroll", async () => {
+		const onPositionChange = vi.fn();
 
 		await act(async () => {
 			render(
 				<HyperJumpViewer
 					url="test.pdf"
 					renderers={[PdfRenderer]}
-					onPageChange={onPageChange}
+					onPositionChange={onPositionChange}
 				/>,
 			);
 		});
@@ -233,19 +233,19 @@ describe("HyperJumpViewer", () => {
 			capturedOnRowsRendered({ startIndex: 2, stopIndex: 3 });
 		});
 
-		expect(onPageChange).toHaveBeenCalledWith(2);
+		expect(onPositionChange).toHaveBeenCalledWith(2);
 		expect(screen.getByText("3 / 5")).toBeInTheDocument();
 	});
 
-	it("does not call onPageChange when the page stays the same", async () => {
-		const onPageChange = vi.fn();
+	it("does not call onPositionChange when the page stays the same", async () => {
+		const onPositionChange = vi.fn();
 
 		await act(async () => {
 			render(
 				<HyperJumpViewer
 					url="test.pdf"
 					renderers={[PdfRenderer]}
-					onPageChange={onPageChange}
+					onPositionChange={onPositionChange}
 				/>,
 			);
 		});
@@ -254,14 +254,14 @@ describe("HyperJumpViewer", () => {
 			await new Promise((r) => setTimeout(r, 50));
 		});
 
-		onPageChange.mockClear();
+		onPositionChange.mockClear();
 
 		// Simulate scroll event with same startIndex
 		act(() => {
 			capturedOnRowsRendered({ startIndex: 0, stopIndex: 1 });
 		});
 
-		expect(onPageChange).not.toHaveBeenCalled();
+		expect(onPositionChange).not.toHaveBeenCalled();
 	});
 
 	it("navigates with prev/next buttons", async () => {
@@ -290,13 +290,13 @@ describe("HyperJumpViewer", () => {
 		expect(screen.getByText("2 / 5")).toBeInTheDocument();
 	});
 
-	it("clamps initialPage that exceeds numPages to the last page", async () => {
+	it("clamps initialPosition that exceeds numPages to the last page", async () => {
 		await act(async () => {
 			render(
 				<HyperJumpViewer
 					url="test.pdf"
 					renderers={[PdfRenderer]}
-					initialPage={100}
+					initialPosition={100}
 				/>,
 			);
 		});
@@ -316,13 +316,13 @@ describe("HyperJumpViewer", () => {
 		});
 	});
 
-	it("clamps negative initialPage to 0", async () => {
+	it("clamps negative initialPosition to 0", async () => {
 		await act(async () => {
 			render(
 				<HyperJumpViewer
 					url="test.pdf"
 					renderers={[PdfRenderer]}
-					initialPage={-5}
+					initialPosition={-5}
 				/>,
 			);
 		});
@@ -342,13 +342,13 @@ describe("HyperJumpViewer", () => {
 		});
 	});
 
-	it("floors fractional initialPage values", async () => {
+	it("floors fractional initialPosition values", async () => {
 		await act(async () => {
 			render(
 				<HyperJumpViewer
 					url="test.pdf"
 					renderers={[PdfRenderer]}
-					initialPage={2.7}
+					initialPosition={2.7}
 				/>,
 			);
 		});

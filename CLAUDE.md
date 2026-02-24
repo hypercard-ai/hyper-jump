@@ -18,7 +18,7 @@ hyper-jump (`@hypercard-ai/hyper-jump`) is a pluggable React document viewer bui
 - `src/index.ts` - Core public API exports (`HyperJumpViewer`, `FileRenderer`, `RendererProps`, etc.)
 - `src/viewer/viewer.tsx` - `HyperJumpViewer` component (thin wrapper: file type detection, container sizing, renderer selection)
 - `src/viewer/viewer.css` - Core container styles (`.hj-viewer`)
-- `src/lib/types.ts` - Shared types (`FileRenderer`, `RendererProps`, `ZoomConfig`)
+- `src/lib/types.ts` - Shared types (`HyperJumpAPI`, `FileRenderer`, `RendererProps`, `ZoomConfig`)
 - `src/lib/use-element-size.ts` - ResizeObserver hook for responsive sizing
 
 ### PDF Renderer (`src/pdf/`)
@@ -34,6 +34,14 @@ Subpath export: `@hypercard-ai/hyper-jump/pdf`
 - `src/pdf/constants.ts` - PDF dimension constants
 - `src/pdf/utils.ts` - Page dimension calculations
 
+### Video Renderer (`src/video/`)
+
+Subpath export: `@hypercard-ai/hyper-jump/video`
+
+- `src/video/index.ts` - Video subpath entry (exports `VideoRenderer`, video-specific types)
+- `src/video/video-viewer.tsx` - Video renderer component (MediaPlayer from @vidstack/react, jump API)
+- `src/video/video-viewer.css` - Video-specific styles (`.hj-video` container)
+
 ### Adding a new renderer
 
 1. Create `src/<type>/` directory with a component implementing `RendererProps`
@@ -46,6 +54,7 @@ Subpath export: `@hypercard-ai/hyper-jump/pdf`
 - **Formatting/Linting**: Biome with tabs, double quotes. Run `npm run check` after changes.
 - **Testing**: Vitest with jsdom. Tests live in `tests/`. Run `npm run test` after changes.
 - **CSS**: BEM-style classes prefixed with `hj-` (e.g., `.hj-viewer`, `.hj-controls`)
-- **Exports**: Core exports `HyperJumpViewer`, `HyperJumpViewerProps`, `FileRenderer`, `RendererProps`, `ZoomConfig`. PDF subpath exports `PdfRenderer`, `HyperJumpPdfViewerAPI`, `HyperJumpPdfViewerProps`, `ScrollBehavior`.
+- **Exports**: Core exports `HyperJumpViewer`, `HyperJumpViewerProps`, `HyperJumpAPI`, `FileRenderer`, `RendererProps`, `ZoomConfig`. PDF subpath exports `PdfRenderer`, `HyperJumpPdfViewerAPI`, `HyperJumpPdfViewerProps`, `ScrollBehavior`. Video subpath exports `VideoRenderer`, `HyperJumpVideoViewerAPI`, `HyperJumpVideoViewerProps`.
+- **Unified API**: All renderers share `HyperJumpAPI` (`jump(position)`), `initialPosition`, and `onPositionChange`. Renderer-specific API types (e.g. `HyperJumpPdfViewerAPI`) are aliases for `HyperJumpAPI`.
 - **React**: Requires React 19+. Uses automatic JSX runtime.
-- **Dependencies**: Heavy dependencies (`react-pdf`, `react-window`) are optional peer deps tied to specific renderers, not bundled in core.
+- **Dependencies**: Heavy dependencies (`react-pdf`, `react-window`, `@vidstack/react`) are optional peer deps tied to specific renderers, not bundled in core.

@@ -13,7 +13,12 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
 import { List, type ListImperativeAPI } from "react-window";
-import type { FileRenderer, RendererProps, ZoomConfig } from "../lib/types";
+import type {
+	FileRenderer,
+	HyperJumpAPI,
+	RendererProps,
+	ZoomConfig,
+} from "../lib/types";
 import PDFViewerControls from "./controls";
 import PDFErrorPage from "./error-page";
 import PDFLoadingPage from "./loading-page";
@@ -28,18 +33,15 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 
 const PAGE_MARGIN = 12;
 
-export interface HyperJumpPdfViewerAPI {
-	/** Imperatively scroll to a page (0-indexed). Clamps to valid range. */
-	jumpToPage: (page: number) => void;
-}
+export type HyperJumpPdfViewerAPI = HyperJumpAPI;
 
 export type ScrollBehavior = "auto" | "instant" | "smooth";
 
 export interface HyperJumpPdfViewerProps extends RendererProps {
 	/** Page to show when the document first loads (0-indexed) */
-	initialPage?: number;
+	initialPosition?: number;
 	/** Called when the visible page changes (0-indexed) */
-	onPageChange?: (page: number) => void;
+	onPositionChange?: (position: number) => void;
 	/** Scroll behavior when navigating between pages (default: "instant") */
 	scrollBehavior?: ScrollBehavior;
 }
@@ -48,7 +50,12 @@ const PdfViewerComponent = forwardRef<
 	HyperJumpPdfViewerAPI,
 	HyperJumpPdfViewerProps
 >(function PdfViewerComponent(props, ref) {
-	const { url, initialPage, onPageChange, scrollBehavior = "instant" } = props;
+	const {
+		url,
+		initialPosition,
+		onPositionChange,
+		scrollBehavior = "instant",
+	} = props;
 	const [document, setDocument] = useState<PDFDocumentProxy>();
 	const [pageIndex, setPageIndex] = useState(0);
 	const [pageDimensions, setPageDimensions] = useState<
@@ -88,31 +95,29 @@ const PdfViewerComponent = forwardRef<
 		[numPages, pageDimensions, scrollBehavior],
 	);
 
-	useImperativeHandle(ref, () => ({ jumpToPage: scrollToPage }), [
-		scrollToPage,
-	]);
+	useImperativeHandle(ref, () => ({ jump: scrollToPage }), [scrollToPage]);
 
-	const hasAppliedInitialPage = useRef(false);
+	const hasAppliedInitialPosition = useRef(false);
 
 	const onLoadSuccess: OnDocumentLoadSuccess = useCallback((response) => {
-		hasAppliedInitialPage.current = false;
+		hasAppliedInitialPosition.current = false;
 		setDocument(response);
 	}, []);
 
-	// Scroll to initialPage once when dimensions are first available.
+	// Scroll to initialPosition once when dimensions are first available.
 	// Deferred by a frame so the List's scroll container is fully initialized.
 	useEffect(() => {
 		if (
-			!hasAppliedInitialPage.current &&
-			initialPage !== undefined &&
+			!hasAppliedInitialPosition.current &&
+			initialPosition !== undefined &&
 			pageDimensions.length === numPages &&
 			numPages > 0
 		) {
-			hasAppliedInitialPage.current = true;
-			const id = requestAnimationFrame(() => scrollToPage(initialPage));
+			hasAppliedInitialPosition.current = true;
+			const id = requestAnimationFrame(() => scrollToPage(initialPosition));
 			return () => cancelAnimationFrame(id);
 		}
-	}, [initialPage, pageDimensions, numPages, scrollToPage]);
+	}, [initialPosition, pageDimensions, numPages, scrollToPage]);
 
 	const file = useMemo(() => {
 		return { url };
@@ -166,10 +171,10 @@ const PdfViewerComponent = forwardRef<
 			scrollPageRef.current = visibleRows.startIndex;
 			if (visibleRows.startIndex !== prev) {
 				setPageIndex(visibleRows.startIndex);
-				onPageChange?.(visibleRows.startIndex);
+				onPositionChange?.(visibleRows.startIndex);
 			}
 		},
-		[onPageChange],
+		[onPositionChange],
 	);
 
 	return (

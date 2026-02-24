@@ -10,7 +10,7 @@ export interface HyperJumpViewerProps {
 	type?: string;
 	/** Renderers that this viewer can use. The first matching renderer wins. */
 	renderers: FileRenderer[];
-	/** Ref forwarded to the active renderer (e.g. for imperative APIs like jumpToPage). */
+	/** Ref forwarded to the active renderer (e.g. for imperative APIs like jump). */
 	ref?: React.Ref<unknown>;
 	/** All other props are forwarded to the matched renderer. */
 	[key: string]: unknown;

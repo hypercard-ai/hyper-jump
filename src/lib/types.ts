@@ -12,6 +12,12 @@ export interface RendererProps {
 	containerHeight: number;
 }
 
+/** Imperative API shared by all renderers. Exposed via ref on HyperJumpViewer. */
+export interface HyperJumpAPI {
+	/** Jump to a position. Meaning depends on renderer (page index for PDF, seconds for video). */
+	jump: (position: number) => void;
+}
+
 /** A renderer descriptor that tells the core viewer how to handle a file type. */
 export interface FileRenderer {
 	/** Unique identifier for this renderer type (e.g. "pdf", "video"). */
