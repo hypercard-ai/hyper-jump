@@ -1,6 +1,6 @@
 {
 	"name": "@hypercard-ai/hyper-jump",
-	"version": "0.3.2",
+	"version": "1.0.0",
 	"description": "Document viewer built for RAG",
 	"license": "MIT",
 	"author": "HyperCard AI",
@@ -14,11 +14,11 @@
 	},
 	"keywords": [
 		"pdf",
+		"video",
 		"viewer",
 		"react",
 		"rag",
-		"virtualized",
-		"react-pdf"
+		"virtualized"
 	],
 	"type": "module",
 	"module": "./dist/index.js",
@@ -28,7 +28,17 @@
 			"types": "./dist/index.d.ts",
 			"default": "./dist/index.js"
 		},
-		"./styles.css": "./dist/index.css"
+		"./pdf": {
+			"types": "./dist/pdf/index.d.ts",
+			"default": "./dist/pdf/index.js"
+		},
+		"./styles.css": "./dist/index.css",
+		"./pdf/styles.css": "./dist/pdf/index.css",
+		"./video": {
+			"types": "./dist/video/index.d.ts",
+			"default": "./dist/video/index.js"
+		},
+		"./video/styles.css": "./dist/video/index.css"
 	},
 	"files": [
 		"dist",
@@ -56,7 +66,16 @@
 	"peerDependencies": {
 		"react": ">=19.0.0",
 		"react-dom": ">=19.0.0",
-		"react-pdf": ">=10.0.0"
+		"react-pdf": ">=10.0.0",
+		"react-window": ">=2.0.0"
+	},
+	"peerDependenciesMeta": {
+		"react-pdf": {
+			"optional": true
+		},
+		"react-window": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.15",
@@ -70,12 +89,10 @@
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",
 		"react-pdf": "10.3.0",
+		"react-window": "^2.2.7",
 		"storybook": "^10.2.8",
 		"tsup": "^8.5.1",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18"
-	},
-	"dependencies": {
-		"react-window": "^2.2.7"
 	}
 }
