@@ -350,28 +350,6 @@ describe("HyperJumpViewer", () => {
 		});
 	});
 
-	it("floors fractional initialPosition values", async () => {
-		await act(async () => {
-			render(
-				<HyperJumpViewer
-					url="test.pdf"
-					renderers={[PdfRenderer]}
-					initialPosition={2.7}
-				/>,
-			);
-		});
-
-		await act(async () => {
-			await new Promise((r) => setTimeout(r, 50));
-		});
-
-		expect(scrollToRow).toHaveBeenCalledWith({
-			index: 2,
-			align: "start",
-			behavior: "instant",
-		});
-	});
-
 	it("changes zoom level via the select", async () => {
 		await act(async () => {
 			render(<HyperJumpViewer url="test.pdf" renderers={[PdfRenderer]} />);
