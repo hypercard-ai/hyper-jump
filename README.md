@@ -23,8 +23,8 @@ Renderers are opt-in — only bundle what you use.
 # Core + PDF renderer
 npm install @hypercard-ai/hyper-jump react-pdf react-window
 
-# Core + Video renderer
-npm install @hypercard-ai/hyper-jump @vidstack/react
+# Core + Video renderer (no extra dependencies needed)
+npm install @hypercard-ai/hyper-jump
 ```
 
 Renderer dependencies are optional peer dependencies — only install those needed by the renderers you use.
@@ -96,17 +96,9 @@ The core component. It detects the file type from the URL extension (or an expli
 | `renderers` | `FileRenderer[]` | Yes | Renderers the viewer can use (first match wins) |
 | `type` | `string` | No | Explicit file type override (e.g. `"pdf"`). If omitted, detected from URL extension |
 | `ref` | `Ref<HyperJumpAPI>` | No | Forwarded to the active renderer for the `jump()` API |
-
-All other props are forwarded to the matched renderer.
-
-### Shared props
-
-These props are supported by all renderers with consistent names:
-
-| Prop | Type | Description |
-| --- | --- | --- |
-| `initialPosition` | `number` | Position to start at when the file loads (page index for PDF, seconds for video) |
-| `onPositionChange` | `(position: number) => void` | Called when the current position changes |
+| `initialPosition` | `number` | No | Position to start at when the file loads (page index for PDF, seconds for video) |
+| `onPositionChange` | `(position: number) => void` | No | Called when the current position changes |
+| `rendererProps` | `T` | No | Additional props forwarded to the matched renderer (generic, typed per renderer) |
 
 ### `HyperJumpAPI` (exposed via ref)
 
@@ -128,7 +120,7 @@ Imported from `@hypercard-ai/hyper-jump/pdf`. Requires `react-pdf` and `react-wi
 
 ### Video Renderer
 
-Imported from `@hypercard-ai/hyper-jump/video`. Requires `@vidstack/react` as a peer dependency.
+Imported from `@hypercard-ai/hyper-jump/video`. Uses the native HTML `<video>` element — no extra dependencies required.
 
 ```tsx
 import { HyperJumpViewer } from "@hypercard-ai/hyper-jump";
@@ -149,7 +141,6 @@ function App() {
 
 | Prop | Type | Required | Description |
 | --- | --- | --- | --- |
-| `title` | `string` | No | Video title shown by the player |
 | `autoPlay` | `boolean` | No | Whether the video should autoplay (default: `false`) |
 
 ### Exports
@@ -205,7 +196,6 @@ const MyVideoRenderer: FileRenderer = {
 - React 19+
 - react-pdf 10+ (when using `PdfRenderer`)
 - react-window 2+ (when using `PdfRenderer`)
-- @vidstack/react 1+ (when using `VideoRenderer`)
 
 ## Development
 

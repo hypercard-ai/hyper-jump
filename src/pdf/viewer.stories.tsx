@@ -260,7 +260,7 @@ export const CitationJumps: StoryObj<typeof meta> = {
 							renderers={[PdfRenderer]}
 							ref={viewerRef}
 							onPositionChange={setCurrentPage}
-							scrollBehavior="smooth"
+							rendererProps={{ scrollBehavior: "smooth" }}
 						/>
 					</div>
 				</div>

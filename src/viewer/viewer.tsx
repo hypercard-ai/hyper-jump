@@ -1,9 +1,11 @@
 import { useMemo } from "react";
-import type { FileRenderer } from "../lib/types";
+import type { FileRenderer, HyperJumpAPI } from "../lib/types";
 import { useElementSize } from "../lib/use-element-size";
 import "./viewer.css";
 
-export interface HyperJumpViewerProps {
+export interface HyperJumpViewerProps<
+	T extends Record<string, unknown> = Record<string, unknown>,
+> {
 	/** URL of the file to display */
 	url: string;
 	/** Explicit file type override (e.g. "pdf", "video"). If omitted, detected from URL extension. */
@@ -11,9 +13,13 @@ export interface HyperJumpViewerProps {
 	/** Renderers that this viewer can use. The first matching renderer wins. */
 	renderers: FileRenderer[];
 	/** Ref forwarded to the active renderer (e.g. for imperative APIs like jump). */
-	ref?: React.Ref<unknown>;
-	/** All other props are forwarded to the matched renderer. */
-	[key: string]: unknown;
+	ref?: React.Ref<HyperJumpAPI>;
+	/** Initial position to show when the content first loads. Meaning depends on renderer (page index for PDF, seconds for video). */
+	initialPosition?: number;
+	/** Called when the current position changes. Meaning depends on renderer (page index for PDF, seconds for video). */
+	onPositionChange?: (position: number) => void;
+	/** Additional props forwarded to the matched renderer. */
+	rendererProps?: T;
 }
 
 function getExtension(url: string): string | null {
@@ -27,8 +33,18 @@ function getExtension(url: string): string | null {
 	}
 }
 
-export function HyperJumpViewer(props: HyperJumpViewerProps) {
-	const { url, type, renderers, ref, ...rest } = props;
+export function HyperJumpViewer<
+	T extends Record<string, unknown> = Record<string, unknown>,
+>(props: HyperJumpViewerProps<T>) {
+	const {
+		url,
+		type,
+		renderers,
+		ref,
+		initialPosition,
+		onPositionChange,
+		rendererProps,
+	} = props;
 
 	const {
 		ref: containerRef,
@@ -50,7 +66,9 @@ export function HyperJumpViewer(props: HyperJumpViewerProps) {
 					url={url}
 					containerWidth={containerWidth}
 					containerHeight={containerHeight}
-					{...rest}
+					initialPosition={initialPosition}
+					onPositionChange={onPositionChange}
+					{...rendererProps}
 				/>
 			) : (
 				<div className="hj-error">Unsupported file type</div>

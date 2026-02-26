@@ -13,6 +13,14 @@ let capturedOnRowsRendered: (visibleRows: {
 	stopIndex: number;
 }) => void;
 
+vi.mock("../src/lib/use-element-size", () => ({
+	useElementSize: () => ({
+		ref: () => {},
+		width: 800,
+		height: 600,
+	}),
+}));
+
 vi.mock("react-pdf", () => {
 	const mockGetPage = (_pageNum: number) =>
 		Promise.resolve({

@@ -26,10 +26,7 @@ import "./pdf-viewer.css";
 import PDFPageRenderer from "./renderer";
 import { getPageDimensions } from "./utils";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-	"pdfjs-dist/build/pdf.worker.min.mjs",
-	import.meta.url,
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 const PAGE_MARGIN = 12;
 
@@ -38,10 +35,6 @@ export type HyperJumpPdfViewerAPI = HyperJumpAPI;
 export type ScrollBehavior = "auto" | "instant" | "smooth";
 
 export interface HyperJumpPdfViewerProps extends RendererProps {
-	/** Page to show when the document first loads (0-indexed) */
-	initialPosition?: number;
-	/** Called when the visible page changes (0-indexed) */
-	onPositionChange?: (position: number) => void;
 	/** Scroll behavior when navigating between pages (default: "instant") */
 	scrollBehavior?: ScrollBehavior;
 }

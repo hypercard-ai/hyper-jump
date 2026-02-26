@@ -39,7 +39,7 @@ Subpath export: `@hypercard-ai/hyper-jump/pdf`
 Subpath export: `@hypercard-ai/hyper-jump/video`
 
 - `src/video/index.ts` - Video subpath entry (exports `VideoRenderer`, video-specific types)
-- `src/video/video-viewer.tsx` - Video renderer component (MediaPlayer from @vidstack/react, jump API)
+- `src/video/video-viewer.tsx` - Video renderer component (native `<video>` element, jump API)
 - `src/video/video-viewer.css` - Video-specific styles (`.hj-video` container)
 
 ### Adding a new renderer
@@ -57,4 +57,4 @@ Subpath export: `@hypercard-ai/hyper-jump/video`
 - **Exports**: Core exports `HyperJumpViewer`, `HyperJumpViewerProps`, `HyperJumpAPI`, `FileRenderer`, `RendererProps`, `ZoomConfig`. PDF subpath exports `PdfRenderer`, `HyperJumpPdfViewerAPI`, `HyperJumpPdfViewerProps`, `ScrollBehavior`. Video subpath exports `VideoRenderer`, `HyperJumpVideoViewerAPI`, `HyperJumpVideoViewerProps`.
 - **Unified API**: All renderers share `HyperJumpAPI` (`jump(position)`), `initialPosition`, and `onPositionChange`. Renderer-specific API types (e.g. `HyperJumpPdfViewerAPI`) are aliases for `HyperJumpAPI`.
 - **React**: Requires React 19+. Uses automatic JSX runtime.
-- **Dependencies**: Heavy dependencies (`react-pdf`, `react-window`, `@vidstack/react`) are optional peer deps tied to specific renderers, not bundled in core.
+- **Dependencies**: Heavy dependencies (`react-pdf`, `react-window`) are optional peer deps tied to specific renderers, not bundled in core. The video renderer uses the native `<video>` element and has no additional dependencies.

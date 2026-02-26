@@ -10,6 +10,10 @@ export interface RendererProps {
 	url: string;
 	containerWidth: number;
 	containerHeight: number;
+	/** Initial position to show when the content first loads. Meaning depends on renderer (page index for PDF, seconds for video). */
+	initialPosition?: number;
+	/** Called when the current position changes. Meaning depends on renderer (page index for PDF, seconds for video). */
+	onPositionChange?: (position: number) => void;
 }
 
 /** Imperative API shared by all renderers. Exposed via ref on HyperJumpViewer. */
