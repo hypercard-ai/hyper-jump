@@ -42,6 +42,14 @@ Subpath export: `@hypercard-ai/hyper-jump/video`
 - `src/video/video-viewer.tsx` - Video renderer component (native `<video>` element, jump API)
 - `src/video/video-viewer.css` - Video-specific styles (`.hj-video` container)
 
+### Markdown Renderer (`src/markdown/`)
+
+Subpath export: `@hypercard-ai/hyper-jump/markdown`
+
+- `src/markdown/index.ts` - Markdown subpath entry (exports `MarkdownRenderer`, markdown-specific types)
+- `src/markdown/markdown-viewer.tsx` - Markdown renderer component (fetches URL, renders with react-markdown, scroll-based position)
+- `src/markdown/markdown-viewer.css` - Markdown-specific styles (typography, code blocks, tables)
+
 ### Adding a new renderer
 
 1. Create `src/<type>/` directory with a component implementing `RendererProps`
@@ -54,7 +62,7 @@ Subpath export: `@hypercard-ai/hyper-jump/video`
 - **Formatting/Linting**: Biome with tabs, double quotes. Run `npm run check` after changes.
 - **Testing**: Vitest with jsdom. Tests live in `tests/`. Run `npm run test` after changes.
 - **CSS**: BEM-style classes prefixed with `hj-` (e.g., `.hj-viewer`, `.hj-controls`)
-- **Exports**: Core exports `HyperJumpViewer`, `HyperJumpViewerProps`, `HyperJumpAPI`, `FileRenderer`, `RendererProps`, `ZoomConfig`. PDF subpath exports `PdfRenderer`, `HyperJumpPdfViewerAPI`, `HyperJumpPdfViewerProps`, `ScrollBehavior`. Video subpath exports `VideoRenderer`, `HyperJumpVideoViewerAPI`, `HyperJumpVideoViewerProps`.
+- **Exports**: Core exports `HyperJumpViewer`, `HyperJumpViewerProps`, `HyperJumpAPI`, `FileRenderer`, `RendererProps`, `ZoomConfig`. PDF subpath exports `PdfRenderer`, `HyperJumpPdfViewerAPI`, `HyperJumpPdfViewerProps`, `ScrollBehavior`. Video subpath exports `VideoRenderer`, `HyperJumpVideoViewerAPI`, `HyperJumpVideoViewerProps`. Markdown subpath exports `MarkdownRenderer`, `HyperJumpMarkdownViewerAPI`, `HyperJumpMarkdownViewerProps`.
 - **Unified API**: All renderers share `HyperJumpAPI` (`jump(position)`), `initialPosition`, and `onPositionChange`. Renderer-specific API types (e.g. `HyperJumpPdfViewerAPI`) are aliases for `HyperJumpAPI`.
 - **React**: Requires React 19+. Uses automatic JSX runtime.
-- **Dependencies**: Heavy dependencies (`react-pdf`, `react-window`) are optional peer deps tied to specific renderers, not bundled in core. The video renderer uses the native `<video>` element and has no additional dependencies.
+- **Dependencies**: Heavy dependencies (`react-pdf`, `react-window`, `react-markdown`) are optional peer deps tied to specific renderers, not bundled in core. The video renderer uses the native `<video>` element and has no additional dependencies.

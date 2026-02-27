@@ -10,7 +10,7 @@ Renderers are opt-in — only bundle what you use.
 
 ## Features
 
-- **Pluggable renderers** — import only the file types you need (PDF, video, and more coming soon)
+- **Pluggable renderers** — import only the file types you need (PDF, video, markdown, and more coming soon)
 - Virtualized rendering via `react-window` for smooth viewing of large PDFs
 - Unified `jump()` API for instant navigation to cited content across all file types
 - Zoom controls with preset levels and automatic fit-to-width
@@ -22,6 +22,9 @@ Renderers are opt-in — only bundle what you use.
 ```bash
 # Core + PDF renderer
 npm install @hypercard-ai/hyper-jump react-pdf react-window
+
+# Core + Markdown renderer
+npm install @hypercard-ai/hyper-jump react-markdown
 
 # Core + Video renderer (no extra dependencies needed)
 npm install @hypercard-ai/hyper-jump
@@ -47,7 +50,7 @@ function App() {
 
 ### Open at a specific position
 
-Pass `initialPosition` to start at a specific location when the file loads. The meaning depends on the renderer — page index for PDF, seconds for video:
+Pass `initialPosition` to start at a specific location when the file loads. The meaning depends on the renderer — page index for PDF, seconds for video, pixel offset for markdown:
 
 ```tsx
 // PDF: open at page 4 (0-indexed)
@@ -55,6 +58,9 @@ Pass `initialPosition` to start at a specific location when the file loads. The 
 
 // Video: start at 30 seconds
 <HyperJumpViewer url="/clip.mp4" renderers={[VideoRenderer]} initialPosition={30} />
+
+// Markdown: start at 200px scroll offset
+<HyperJumpViewer url="/doc.md" renderers={[MarkdownRenderer]} initialPosition={200} />
 ```
 
 ### Jump to a position imperatively
@@ -96,7 +102,7 @@ The core component. It detects the file type from the URL extension (or an expli
 | `renderers` | `FileRenderer[]` | Yes | Renderers the viewer can use (first match wins) |
 | `type` | `string` | No | Explicit file type override (e.g. `"pdf"`). If omitted, detected from URL extension |
 | `ref` | `Ref<HyperJumpAPI>` | No | Forwarded to the active renderer for the `jump()` API |
-| `initialPosition` | `number` | No | Position to start at when the file loads (page index for PDF, seconds for video) |
+| `initialPosition` | `number` | No | Position to start at when the file loads (page index for PDF, seconds for video, pixel offset for markdown) |
 | `onPositionChange` | `(position: number) => void` | No | Called when the current position changes |
 | `rendererProps` | `T` | No | Additional props forwarded to the matched renderer (generic, typed per renderer) |
 
@@ -106,7 +112,7 @@ All renderers expose the same imperative API:
 
 | Method | Description |
 | --- | --- |
-| `jump(position: number)` | Jump to a position. Page index for PDF (0-indexed, clamped), seconds for video. |
+| `jump(position: number)` | Jump to a position. Page index for PDF (0-indexed, clamped), seconds for video, pixel offset for markdown. |
 
 ### PDF Renderer
 
@@ -117,6 +123,26 @@ Imported from `@hypercard-ai/hyper-jump/pdf`. Requires `react-pdf` and `react-wi
 | Prop | Type | Required | Description |
 | --- | --- | --- | --- |
 | `scrollBehavior` | `"auto" \| "instant" \| "smooth"` | No | Scroll behavior when navigating between pages (default: `"instant"`) |
+
+### Markdown Renderer
+
+Imported from `@hypercard-ai/hyper-jump/markdown`. Requires `react-markdown` as a peer dependency. Fetches the markdown file from the URL and renders it with GitHub-flavored styling.
+
+```tsx
+import { HyperJumpViewer } from "@hypercard-ai/hyper-jump";
+import { MarkdownRenderer } from "@hypercard-ai/hyper-jump/markdown";
+import "@hypercard-ai/hyper-jump/styles.css";
+import "@hypercard-ai/hyper-jump/markdown/styles.css";
+
+function App() {
+  return (
+    <HyperJumpViewer
+      url="/path/to/document.md"
+      renderers={[MarkdownRenderer]}
+    />
+  );
+}
+```
 
 ### Video Renderer
 
@@ -165,6 +191,14 @@ function App() {
 | `HyperJumpPdfViewerProps` | Type | Full props for the PDF renderer |
 | `ScrollBehavior` | Type | Scroll behavior union type |
 
+#### `@hypercard-ai/hyper-jump/markdown`
+
+| Export | Type | Description |
+| --- | --- | --- |
+| `MarkdownRenderer` | `FileRenderer` | Renderer descriptor for markdown files |
+| `HyperJumpMarkdownViewerAPI` | Type | Alias for `HyperJumpAPI` |
+| `HyperJumpMarkdownViewerProps` | Type | Full props for the markdown renderer |
+
 #### `@hypercard-ai/hyper-jump/video`
 
 | Export | Type | Description |
@@ -196,6 +230,7 @@ const MyVideoRenderer: FileRenderer = {
 - React 19+
 - react-pdf 10+ (when using `PdfRenderer`)
 - react-window 2+ (when using `PdfRenderer`)
+- react-markdown 9+ (when using `MarkdownRenderer`)
 
 ## Development
 
